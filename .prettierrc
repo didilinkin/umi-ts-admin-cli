@@ -2,6 +2,11 @@
   "singleQuote": true,
   "trailingComma": "es5",
   "printWidth": 100,
+  "semi": true,
+  "jsxSingleQuote": false,
+  "bracketSpacing": true,
+  "jsxBracketSameLine": false,
+  "arrowParens": "avoid",
   "overrides": [
     {
       "files": ".prettierrc",

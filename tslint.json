@@ -1,0 +1,17 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:latest",
+    "tslint-react",
+    "tslint-eslint-rules",
+    "tslint-config-prettier"
+  ],
+  "rules": {
+    "no-console": [
+      true,
+      "log"
+    ],
+    "no-construct": true,
+    "no-reference": true
+  }
+}
