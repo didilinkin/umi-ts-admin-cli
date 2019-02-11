@@ -4,16 +4,16 @@
 * package.json 配置 - success
 * Prettier 配置 - success 目前是 手动格式化
 * TSLint 配置 - success
-* 依赖安装
-* Nav 配置
+* 依赖安装 - success
+* Nav 配置 - success
 * 强检查 配置
 * git hook 配置
 
 ## 关于 格式化 (ESLint + TSLint + Prettier) [说明文档](./docs/format.md)
 
 ## 功能计划表
-* 前端布局实现 (导航栏、顶部菜单、左侧菜单栏等基础布局)
-* 代码检测实现
+* 前端布局实现 (导航栏、顶部菜单、左侧菜单栏等基础布局) - success
+* 代码检测实现 - success
 * 项目目录结构规范化实现及说明
 * Reactjs 性能优化及最佳实践实现
 * 报错异常前后端标准化实现

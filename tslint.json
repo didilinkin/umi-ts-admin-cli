@@ -9,9 +9,22 @@
   "rules": {
     "no-console": [
       true,
-      "log"
+      "error"
     ],
     "no-construct": true,
-    "no-reference": true
+    "no-reference": true,
+    "interface-name": false,
+    "semicolon": [
+      true,
+      "never"
+    ],
+    "ordered-imports": false,
+    "no-submodule-imports": false,
+    "no-implicit-dependencies": false,
+    "jsx-no-lambda": false,
+    "member-access": false,
+    "object-literal-sort-keys": false,
+    "no-string-literal": false,
+    "no-empty": false
   }
 }
