@@ -8,6 +8,8 @@
 * Nav 配置 - success
 * 强检查 配置
 * git hook 配置
+* Typescript 文件 暂时无法使用 jest 测试用例, 需要在官方实例中测试
+* 部分组件没有改为 .tsx 格式, 需要跟进修改 (3个模块)
 
 ## 关于 格式化 (ESLint + TSLint + Prettier) [说明文档](./docs/format.md)
 
