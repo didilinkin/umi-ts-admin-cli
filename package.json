@@ -57,9 +57,6 @@
     "umi-plugin-react": "^1.4.0"
   },
   "lint-staged": {
-    "*.{js,jsx}": [
-      "eslint --fix"
-    ],
     "*.{ts, tsx}": [
       "prettier --write",
       "git add"
