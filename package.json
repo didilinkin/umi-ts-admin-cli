@@ -26,8 +26,12 @@
     "lodash": "^4.17.11",
     "lodash-decorators": "^6.0.1",
     "moment": "^2.24.0",
+    "numeral": "^2.0.6",
     "path-to-regexp": "^3.0.0",
-    "rc-drawer-menu": "^1.1.0"
+    "rc-drawer-menu": "^1.1.0",
+    "react": "^16.6.3",
+    "umi": "^2.4.4",
+    "umi-request": "^1.0.0"
   },
   "devDependencies": {
     "@types/jest": "^23.3.12",
@@ -53,7 +57,6 @@
     "tslint-eslint-rules": "^5.4.0",
     "tslint-react": "^3.6.0",
     "typescript": "^3.3.1",
-    "umi": "^2.4.2",
     "umi-plugin-react": "^1.4.0"
   },
   "lint-staged": {

@@ -11,6 +11,11 @@ export default {
         dynamicImport: { webpackChunkName: true },
         title: 'umi-typescript-cli',
         dll: true,
+        locale: {
+          enable: true, // default false
+          default: 'zh-CN', // default zh-CN
+          baseNavigator: true, // default true, when it is true, will use `navigator.language` overwrite default
+        },
         routes: {
           exclude: [
             /models\//,

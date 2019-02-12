@@ -2,7 +2,7 @@
  * @Author: yanxiaodi 929213769@qq.com
  * @Date: 2019-02-11 21:12:28
  * @LastEditors: yanxiaodi 929213769@qq.com
- * @LastEditTime: 2019-02-11 21:39:01
+ * @LastEditTime: 2019-02-12 12:06:36
  * @Description: 菜单
  */
 /* eslint no-useless-escape:0 */
@@ -33,6 +33,11 @@ const menuData = [
         // hideInMenu: true,
       },
     ],
+  },
+  {
+    name: 'Analysis',
+    icon: 'dashboard',
+    path: 'analysis',
   },
 ]
 
