@@ -2,7 +2,7 @@
  * @Author: yanxiaodi 929213769@qq.com
  * @Date: 2019-02-11 21:12:28
  * @LastEditors: yanxiaodi 929213769@qq.com
- * @LastEditTime: 2019-02-12 12:06:36
+ * @LastEditTime: 2019-02-13 16:59:41
  * @Description: 菜单
  */
 /* eslint no-useless-escape:0 */
@@ -14,7 +14,7 @@ export function isUrl(path) {
 
 const menuData = [
   {
-    name: 'Pages',
+    name: '仪表板',
     icon: 'dashboard',
     path: 'dashboard',
     children: [
@@ -25,6 +25,16 @@ const menuData = [
       {
         name: '监控页',
         path: 'monitor',
+        children: [
+          {
+            name: '监控页-1',
+            path: 'monitor1',
+          },
+          {
+            name: '监控页-2',
+            path: 'monitor2',
+          },
+        ],
       },
       {
         name: '工作台',
@@ -35,7 +45,7 @@ const menuData = [
     ],
   },
   {
-    name: 'Analysis',
+    name: '分析',
     icon: 'dashboard',
     path: 'analysis',
   },
