@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react'
 import styled from 'styled-components'
 import _ from 'lodash'
+import { List } from 'immutable'
 import {
   Form,
   Row,
@@ -20,10 +21,13 @@ import {
 import { FormComponentProps } from 'antd/lib/form'
 
 import UpdateForm from './UpdateForm'
+import SetAdvancedInput from './SetAdvancedInput'
 import styles from './style.less'
+import { TotalStateItem, QueryParamsItem } from '../../types'
 
 const FormItem = Form.Item
 const { Option } = Select
+const { MonthPicker, RangePicker, WeekPicker } = DatePicker
 
 const CreateForm = Form.create()((props: any) => {
   const { modalVisible, form, handleAdd, handleModalVisible } = props
@@ -54,11 +58,10 @@ const CreateForm = Form.create()((props: any) => {
 interface IFormProps extends FormComponentProps {
   dispatch: (param: any) => void,
   loading: boolean,
-  queryParams: {
-    toJS: () => void,
-  },
+  queryParams: List<QueryParamsItem>,
+  totalStatus: List<TotalStateItem>,
   form: any,
-  query?: any, // ?
+  query?: any, // 无法确定?
 }
 
 interface IFormState {
@@ -68,21 +71,12 @@ interface IFormState {
   selectedRows: any[],
   formValues: any, // values
   stepFormValues: object,
+  // props => state
+  queryParams: QueryParamsItem[],
+  totalStatus: TotalStateItem[],
 }
 
-// handleSearch                 1. 搜索 - 1
-// handleFormReset              2. 重置表单 - 1
-// toggleForm                   3. 表单开关 - 1
-// render                       4. 渲染
-// handleMenuClick              5. 菜单点击 - 1
-// handleAdd                    6. 添加 - 1
-// handleModalVisible           7. 改变 modal 显隐 - 1
-// handleUpdateModalVisible     8. 更新 modal 显隐 - 1
-// handleUpdate                 9. 更新 - 1
-// renderForm                   10. 渲染 form表单
-// renderAdvancedForm           11. 渲染高级 表单
-
-class QueryForm extends React.Component<IFormProps, IFormState> {
+class QueryForm extends PureComponent<IFormProps, IFormState> {
   constructor(props: IFormProps) {
     super(props)
     this.state = {
@@ -92,10 +86,16 @@ class QueryForm extends React.Component<IFormProps, IFormState> {
       selectedRows: [],
       formValues: {},
       stepFormValues: {},
+      queryParams: props.queryParams.toJS(),
+      totalStatus: _.filter(
+        props.totalStatus.toJS(),
+        (item: TotalStateItem) => item.name !== 'total'
+      ),
     }
   }
   // 渲染 简单表单
   renderSimpleForm() {
+    const { totalStatus } = this.state
     const {
       form: { getFieldDecorator },
     } = this.props
@@ -103,16 +103,27 @@ class QueryForm extends React.Component<IFormProps, IFormState> {
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="规则名称">
-              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
+            <FormItem label="编号">
+              {getFieldDecorator('name')(<Input placeholder="请输入 ID" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="使用状态">
               {getFieldDecorator('status')(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Option value="0">关闭</Option>
-                  <Option value="1">运行中</Option>
+                  {!!totalStatus && totalStatus.length > 0 ? (
+                    totalStatus.map((item: TotalStateItem) => (
+                      <Option key={item.name} value={item.value}>
+                        {' '}
+                        {item.title}{' '}
+                      </Option>
+                    ))
+                  ) : (
+                    <Option disabled={true} value="0">
+                      {' '}
+                      状态错误{' '}
+                    </Option>
+                  )}
                 </Select>
               )}
             </FormItem>
@@ -128,6 +139,16 @@ class QueryForm extends React.Component<IFormProps, IFormState> {
               <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
                 展开 <Icon type="down" />
               </a>
+
+              {/* TODO: '新建' 后有可能加入 多功能键 */}
+              <Button
+                icon="plus"
+                type="primary"
+                style={{ marginLeft: 16 }}
+                onClick={() => this.handleModalVisible(true)}
+              >
+                新建
+              </Button>
             </span>
           </Col>
         </Row>
@@ -140,7 +161,9 @@ class QueryForm extends React.Component<IFormProps, IFormState> {
     e.preventDefault()
     const { dispatch, form } = this.props
     form.validateFields((err, fieldsValue) => {
-      if (err) { return }
+      if (err) {
+        return
+      }
       const values = {
         ...fieldsValue,
         updatedAt: fieldsValue.updatedAt && fieldsValue.updatedAt.valueOf(),
@@ -189,7 +212,9 @@ class QueryForm extends React.Component<IFormProps, IFormState> {
     const { dispatch } = this.props
     const { selectedRows } = this.state
 
-    if (!selectedRows) { return }
+    if (!selectedRows) {
+      return
+    }
     switch (e.key) {
       case 'remove':
         dispatch({
@@ -245,6 +270,15 @@ class QueryForm extends React.Component<IFormProps, IFormState> {
     this.handleUpdateModalVisible()
   }
 
+  // AdvancedForm - DatePicker 回调
+  AdvancedFormCbFunc = (params: any) => {
+    // console.log('AdvancedFormDatePicker: date ===> ', date)
+    // console.log('AdvancedFormDatePicker: dateString ===> ', dateString)
+
+    // 测试 日期选择器的回调
+    console.log('AdvancedFormCbFunc: params ===> ', params)
+  }
+
   // 渲染高级 表单
   renderAdvancedForm() {
     const {
@@ -254,55 +288,57 @@ class QueryForm extends React.Component<IFormProps, IFormState> {
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="规则名称">
-              {getFieldDecorator('name')(<Input placeholder="请输入" />)}
+            <FormItem label="编号">
+              {getFieldDecorator('name')(<Input placeholder="请输入 ID" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="使用状态">
               {getFieldDecorator('status')(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Option value="0">关闭</Option>
-                  <Option value="1">运行中</Option>
+                  {!!this.state.totalStatus && this.state.totalStatus.length > 0 ? (
+                    this.state.totalStatus.map((item: TotalStateItem) => (
+                      <Option key={item.name} value={item.value}>
+                        {' '}
+                        {item.title}{' '}
+                      </Option>
+                    ))
+                  ) : (
+                    <Option disabled={true} value="0">
+                      {' '}
+                      状态错误{' '}
+                    </Option>
+                  )}
                 </Select>
               )}
             </FormItem>
           </Col>
+          {/*
+            <Col md={8} sm={24}>
+              <FormItem label="调用次数">
+                {getFieldDecorator('number')(<InputNumber style={{ width: '100%' }} />)}
+              </FormItem>
+            </Col>
+          */}
+
+          {/* TODO: '新建' 后有可能加入 多功能键 */}
           <Col md={8} sm={24}>
-            <FormItem label="调用次数">
-              {getFieldDecorator('number')(<InputNumber style={{ width: '100%' }} />)}
-            </FormItem>
+            <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true)}>
+              新建
+            </Button>
           </Col>
         </Row>
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={8} sm={24}>
-            <FormItem label="更新日期">
-              {getFieldDecorator('date')(
-                <DatePicker style={{ width: '100%' }} placeholder="请输入更新日期" />
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="使用状态">
-              {getFieldDecorator('status3')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Option value="0">关闭</Option>
-                  <Option value="1">运行中</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="使用状态">
-              {getFieldDecorator('status4')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Option value="0">关闭</Option>
-                  <Option value="1">运行中</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-        </Row>
+
+        {/* 配置 支持自定义的 参数功能 */}
+        {SetAdvancedInput({
+          queryParams: _.filter(
+            this.state.queryParams,
+            (item: QueryParamsItem) => item.name !== 'id' && item.name !== 'status',
+          ),
+          getFieldDecorator,
+          cbFunc: this.AdvancedFormCbFunc,
+        })}
+
         <div style={{ overflow: 'hidden' }}>
           <div style={{ float: 'right', marginBottom: 24 }}>
             <Button type="primary" htmlType="submit">
@@ -326,12 +362,9 @@ class QueryForm extends React.Component<IFormProps, IFormState> {
   }
 
   render() {
-    const { getFieldDecorator } = this.props.form
-    const queryParams = this.props.queryParams.toJS()
-    const {
-      // query: { data },
-      loading,
-    } = this.props
+    // const { getFieldDecorator } = this.props.form
+    const { loading } = this.props
+
     const { selectedRows, modalVisible, updateModalVisible, stepFormValues } = this.state
     const menu = (
       <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
@@ -354,9 +387,6 @@ class QueryForm extends React.Component<IFormProps, IFormState> {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true)}>
-                新建
-              </Button>
               {selectedRows.length > 0 && (
                 <span>
                   <Button>批量操作</Button>
@@ -381,15 +411,13 @@ class QueryForm extends React.Component<IFormProps, IFormState> {
           </div>
         </Card>
         <CreateForm {...parentMethods} modalVisible={modalVisible} />
-        {stepFormValues && Object.keys(stepFormValues).length
-          ? (
-            <UpdateForm
-              {...updateMethods}
-              updateModalVisible={updateModalVisible}
-              values={stepFormValues}
-            />
-          )
-          : null}
+        {stepFormValues && Object.keys(stepFormValues).length ? (
+          <UpdateForm
+            {...updateMethods}
+            updateModalVisible={updateModalVisible}
+            values={stepFormValues}
+          />
+        ) : null}
       </>
     )
   }

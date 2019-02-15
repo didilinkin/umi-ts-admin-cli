@@ -21,8 +21,8 @@ import setChildProps from './utils/setChildProps'
 interface IProps {
   dispatch: () => void,
   loading: boolean,
-  totalStatus: TotalStatus,
-  queryParams: QueryParams,
+  totalStatus: TotalStatus, // Immutable
+  queryParams: QueryParams, // Immutable
 }
 
 interface IState {
@@ -46,7 +46,7 @@ export default class Query extends React.Component<IProps, IState> {
           <QueryData {...pick(this.props, setChildProps(['totalStatus']))} />
 
           {/* 搜索项 */}
-          <QueryForm {...pick(this.props, setChildProps(['queryParams']))} />
+          <QueryForm {...pick(this.props, setChildProps(['queryParams', 'totalStatus']))} />
 
           {/* 表格部分 */}
           <QueryTable />

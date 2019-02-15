@@ -16,23 +16,59 @@ const initState = fromJS({
     // 全部可用的 检索项目
     {
       title: '编号',
+      type: 'input',
       name: 'id',
       value: '1',
     },
     {
+      title: '状态',
+      type: 'select',
+      name: 'status',
+      value: 'wait',
+      selectGroup: [
+        { title: '等待', name: 'wait' },
+        { title: '进行', name: 'processing' },
+        { title: '完成', name: 'success' },
+        { title: '失败', name: 'failure' },
+        { title: '告警', name: 'alarm' },
+        { title: '总量', name: 'total' },
+      ],
+    },
+    {
       title: '更新日期',
-      name: 'rangePicker', // 'RangePicker', 'DatePicker', 'MonthPicker', 'WeekPicker' 等..
+      type: 'rangePicker',
+      name: 'date', // 'RangePicker', 'DatePicker', 'MonthPicker', 'WeekPicker' 等..
       value: [1550125191],
     },
     {
-      title: '使用状态',
-      name: 'status',
-      value: ['wait', 'processing', 'success', 'failure', 'alarm'],
-    },
-    {
       title: '调用次数',
+      type: 'inputNumber', // TODO: 约束只允许输入 number
       name: 'count',
       value: 1,
+      max: 99999,
+      min: 1,
+      step: 1,
+    },
+    {
+      title: '操作人',
+      type: 'select',
+      name: 'op',
+      value: 'wait',
+      selectGroup: [
+        { title: '运维', name: 'OM' },
+        { title: '后端', name: 'BE' },
+        { title: '前端', name: 'FE' },
+        { title: '测试', name: 'TE' },
+      ],
+    },
+    {
+      title: '价格',
+      type: 'inputNumber-price',
+      name: 'inputNumber-price',
+      value: '30000',
+      max: 99999,
+      mim: 1,
+      step: 0.1,
     },
   ],
   queryTabs: ['id', 'status'], // "检索项"

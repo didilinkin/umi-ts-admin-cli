@@ -194,7 +194,7 @@ class UpdateForm extends React.Component<IUpdateFormProps, any> {
         <Button key="submit" type="primary" onClick={() => this.handleNext(currentStep)}>
           完成
         </Button>,
-      ];
+      ]
     }
     return [
       <Button key="cancel" onClick={() => handleUpdateModalVisible(false, values)}>
