@@ -1,10 +1,3 @@
-/*
- * @Author: yanxiaodi 929213769@qq.com
- * @Date: 2019-02-11 21:41:40
- * @LastEditors: yanxiaodi 929213769@qq.com
- * @LastEditTime: 2019-02-11 21:59:31
- * @Description:
- */
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import { Input, Icon, AutoComplete } from 'antd'

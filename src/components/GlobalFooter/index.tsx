@@ -1,10 +1,3 @@
-/*
- * @Author: yanxiaodi 929213769@qq.com
- * @Date: 2019-02-11 21:40:48
- * @LastEditors: yanxiaodi 929213769@qq.com
- * @LastEditTime: 2019-02-11 21:41:00
- * @Description: Footer
- */
 import React from 'react'
 import classNames from 'classnames'
 import styles from './index.less'

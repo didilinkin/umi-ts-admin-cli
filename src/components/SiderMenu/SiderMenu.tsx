@@ -1,10 +1,3 @@
-/*
- * @Author: yanxiaodi 929213769@qq.com
- * @Date: 2019-02-11 21:33:32
- * @LastEditors: yanxiaodi 929213769@qq.com
- * @LastEditTime: 2019-02-11 21:56:26
- * @Description:
- */
 import React, { PureComponent } from 'react'
 import { Layout, Menu, Icon } from 'antd'
 import pathToRegexp from 'path-to-regexp'

@@ -1,10 +1,3 @@
-/*
- * @Author: yanxiaodi 929213769@qq.com
- * @Date: 2019-02-11 21:30:10
- * @LastEditors: yanxiaodi 929213769@qq.com
- * @LastEditTime: 2019-02-11 21:30:31
- * @Description:
- */
 import { urlToList } from '../index'
 
 describe('test urlToList', () => {

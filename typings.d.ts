@@ -10,3 +10,8 @@ declare module '*.sass'
 declare module '*.styl'
 declare module '*.svg'
 declare const GlobalHeader: any
+declare interface DvaApi {
+  call: () => void
+  put: () => void
+  select: () => void
+}

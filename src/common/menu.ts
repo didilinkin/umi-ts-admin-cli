@@ -1,10 +1,3 @@
-/*
- * @Author: yanxiaodi 929213769@qq.com
- * @Date: 2019-02-11 21:12:28
- * @LastEditors: yanxiaodi 929213769@qq.com
- * @LastEditTime: 2019-02-13 16:59:41
- * @Description: 菜单
- */
 /* eslint no-useless-escape:0 */
 const reg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/g
 
@@ -48,6 +41,11 @@ const menuData = [
     name: '分析',
     icon: 'dashboard',
     path: 'analysis',
+  },
+  {
+    name: '查询页面',
+    icon: 'search',
+    path: 'query',
   },
 ]
 

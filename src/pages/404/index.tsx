@@ -1,10 +1,3 @@
-/*
- * @Author: yanxiaodi 929213769@qq.com
- * @Date: 2019-02-13 17:15:03
- * @LastEditors: yanxiaodi 929213769@qq.com
- * @LastEditTime: 2019-02-13 17:31:43
- * @Description: 404 页面
- */
 import React from 'react'
 import { formatMessage } from 'umi-plugin-react/locale'
 import Link from 'umi/link'
