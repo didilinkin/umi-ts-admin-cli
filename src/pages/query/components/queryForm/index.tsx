@@ -387,16 +387,14 @@ class QueryForm extends PureComponent<IFormProps, IFormState> {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              {selectedRows.length > 0 && (
-                <span>
-                  <Button>批量操作</Button>
-                  <Dropdown overlay={menu}>
-                    <Button>
-                      更多操作 <Icon type="down" />
-                    </Button>
-                  </Dropdown>
-                </span>
-              )}
+              <span>
+                <Button>批量操作</Button>
+                <Dropdown overlay={menu}>
+                  <Button>
+                    更多操作 <Icon type="down" />
+                  </Button>
+                </Dropdown>
+              </span>
             </div>
 
             {/* 提示信息 */}
@@ -410,14 +408,20 @@ class QueryForm extends PureComponent<IFormProps, IFormState> {
             /> */}
           </div>
         </Card>
+
+        {/* 新建 modal */}
         <CreateForm {...parentMethods} modalVisible={modalVisible} />
-        {stepFormValues && Object.keys(stepFormValues).length ? (
-          <UpdateForm
-            {...updateMethods}
-            updateModalVisible={updateModalVisible}
-            values={stepFormValues}
-          />
-        ) : null}
+
+        {/* 列表配置 => '更新配置' 触发的 '步骤功能'; TODO: 暂不需要 */}
+        {/*
+          {stepFormValues && Object.keys(stepFormValues).length ? (
+            <UpdateForm
+              {...updateMethods}
+              updateModalVisible={updateModalVisible}
+              values={stepFormValues}
+            />
+          ) : null}
+        */}
       </>
     )
   }
