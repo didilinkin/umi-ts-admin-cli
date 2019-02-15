@@ -13,7 +13,9 @@ import {
   QueryState,
   TotalStatus,
   QueryParams,
+  DataItemType,
 } from './types'
+import { List } from 'immutable'
 
 // utils
 import setChildProps from './utils/setChildProps'
@@ -21,8 +23,9 @@ import setChildProps from './utils/setChildProps'
 interface IProps {
   dispatch: () => void,
   loading: boolean,
-  totalStatus: TotalStatus, // Immutable
-  queryParams: QueryParams, // Immutable
+  totalStatus: List<TotalStatus>, // Immutable
+  queryParams: List<QueryParams>, // Immutable
+  data: List<DataItemType>, // Immutable
 }
 
 interface IState {
@@ -35,6 +38,7 @@ interface IState {
     loading: state.loading.global,
     totalStatus: state.query.get('totalStatus'),
     queryParams: state.query.get('queryParams'),
+    data: state.query.get('data'),
   })
 )
 export default class Query extends React.Component<IProps, IState> {
@@ -49,7 +53,7 @@ export default class Query extends React.Component<IProps, IState> {
           <QueryForm {...pick(this.props, setChildProps(['queryParams', 'totalStatus']))} />
 
           {/* 表格部分 */}
-          <QueryTable />
+          <QueryTable {...pick(this.props, setChildProps(['data']))} />
         </>
       </DocumentTitle>
     )

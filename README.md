@@ -1,5 +1,42 @@
 # Umi-TS-cli
 > Admin 后台管理系统, 将支持 SAAS 系统
+
+## 预览项目
+
+```bash
+# 全局安装 umi 工具 (方便安装 block区块 功能)
+yarn global add umi # or npm install -g umi
+
+# 安装依赖
+yarn install
+
+# 预览
+yarn start
+```
+
+## 打包项目
+
+```bash
+# 打包完成的 文件在 ./dist 文件夹内
+yarn build
+```
+
+## 相关文档
+* [immutable 相关文档](./docs/immutable.md)
+
+## 开发环境
+```bash
+# 编辑器
+vscode
+
+# node -v
+v10.7.0
+
+# yarn -v
+v1.10.1
+```
+
+
 ## TODO list
 * package.json 配置 - success
 * Prettier 配置 - success 目前是 手动格式化

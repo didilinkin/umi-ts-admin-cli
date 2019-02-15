@@ -34,3 +34,10 @@ export interface QueryState {
     get: (name: string) => void
   }
 }
+
+export interface DataItemType {
+  name: string
+  age: number
+  address: string
+  children?: DataItemType[]
+}
