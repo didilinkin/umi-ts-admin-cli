@@ -1,141 +1,30 @@
-import { fromJS } from 'immutable'
+import { fromJS, Map } from 'immutable'
 import _ from 'lodash'
 
+import { TotalStatus, QueryParams } from '../types'
+import { BLOCK_PATH } from '../config'
+import checkResCode from '../utils/checkResCode'
+import * as queryServices from '../service'
+
+interface QueryState extends StoreType {
+  query: Map<string, any>
+}
+interface CallUpdate {
+  query: {
+    [propName: string]: any
+  }
+}
+
+const SET_TOTAL_STATUS = 'SET_TOTAL_STATUS'
+const SET_QUERY_PARAMS = 'SET_QUERY_PARAMS'
+const SET_QUERY_DATA = 'SET_QUERY_DATA'
+
 const initState = fromJS({
-  visible: false,
-  modalType: '', // 'create', 'update', 'edit'
-  totalStatus: [
-    { title: '等待', name: 'wait', value: 3 },
-    { title: '进行', name: 'processing', value: 5 },
-    { title: '完成', name: 'success', value: 6 },
-    { title: '失败', name: 'failure', value: 4 },
-    { title: '告警', name: 'alarm', value: 2 },
-    { title: '总量', name: 'total', value: 20 },
-  ],
-  queryParams: [
-    // 全部可用的 检索项目
-    {
-      title: '编号',
-      type: 'input',
-      name: 'id',
-      value: '1',
-    },
-    {
-      title: '状态',
-      type: 'select',
-      name: 'status',
-      value: 'wait',
-      selectGroup: [
-        { title: '等待', name: 'wait' },
-        { title: '进行', name: 'processing' },
-        { title: '完成', name: 'success' },
-        { title: '失败', name: 'failure' },
-        { title: '告警', name: 'alarm' },
-        { title: '总量', name: 'total' },
-      ],
-    },
-    {
-      title: '更新日期',
-      type: 'rangePicker',
-      name: 'date', // 'RangePicker', 'DatePicker', 'MonthPicker', 'WeekPicker' 等..
-      value: [1550125191],
-    },
-    {
-      title: '调用次数',
-      type: 'inputNumber', // TODO: 约束只允许输入 number
-      name: 'count',
-      value: 1,
-      max: 99999,
-      min: 1,
-      step: 1,
-    },
-    {
-      title: '操作人',
-      type: 'select',
-      name: 'op',
-      value: 'wait',
-      selectGroup: [
-        { title: '运维', name: 'OM' },
-        { title: '后端', name: 'BE' },
-        { title: '前端', name: 'FE' },
-        { title: '测试', name: 'TE' },
-      ],
-    },
-    {
-      title: '价格',
-      type: 'inputNumber-price',
-      name: 'inputNumber-price',
-      value: '30000',
-      max: 99999,
-      mim: 1,
-      step: 0.1,
-    },
-  ],
-  queryTabs: ['id', 'status'], // "检索项"
-  data: [
-    {
-      key: 1,
-      name: 'John Brown sr.',
-      age: 60,
-      address: 'New York No. 1 Lake Park',
-      children: [
-        {
-          key: 11,
-          name: 'John Brown',
-          age: 42,
-          address: 'New York No. 2 Lake Park',
-        },
-        {
-          key: 12,
-          name: 'John Brown jr.',
-          age: 30,
-          address: 'New York No. 3 Lake Park',
-          children: [
-            {
-              key: 121,
-              name: 'Jimmy Brown',
-              age: 16,
-              address: 'New York No. 3 Lake Park',
-            },
-          ],
-        },
-        {
-          key: 13,
-          name: 'Jim Green sr.',
-          age: 72,
-          address: 'London No. 1 Lake Park',
-          children: [
-            {
-              key: 131,
-              name: 'Jim Green',
-              age: 42,
-              address: 'London No. 2 Lake Park',
-              children: [
-                {
-                  key: 1311,
-                  name: 'Jim Green jr.',
-                  age: 25,
-                  address: 'London No. 3 Lake Park',
-                },
-                {
-                  key: 1312,
-                  name: 'Jimmy Green sr.',
-                  age: 18,
-                  address: 'London No. 4 Lake Park',
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-    {
-      key: 2,
-      name: 'Joe Black',
-      age: 32,
-      address: 'Sidney No. 1 Lake Park',
-    },
-  ],
+  query: {},
+  totalStatus: [],
+  queryParams: [],
+  queryTabs: ['id', 'status'],
+  data: [],
 })
 
 export default {
@@ -143,11 +32,124 @@ export default {
 
   state: initState,
 
-  effects: {
-    *fetch(payload: any, { call }: DvaApi) {
-      console.log('query/fetch payload ===> ', payload)
+  subscriptions: {
+    setup({ dispatch, history }) {
+      return history.listen(
+        ({ pathname }: History): void => {
+          if (pathname === BLOCK_PATH) {
+            dispatch({ type: 'init' })
+          }
+        }
+      )
     },
   },
 
-  reducers: {},
+  effects: {
+    // atom: 获取 全部状态
+    *getTotalStatus({ query }: CallUpdate, { call, put }: DvaApi) {
+      let totalStatus: TotalStatus = [{ title: '总量', name: 'total', value: 0 }]
+      try {
+        const totalStatusRes = yield call(queryServices.getTotalStatus, { ...query })
+        if (checkResCode(totalStatusRes)) {
+          totalStatus = _.cloneDeep(_.get(totalStatusRes, 'data.totalStatus'))
+        }
+      } catch (e) {
+        console.log('query/getTotalStatus 出错', e)
+      } finally {
+        yield put({ type: SET_TOTAL_STATUS, payload: { totalStatus } })
+      }
+    },
+
+    // atom: 更新 表格数据
+    *getQueryData({ query }: CallUpdate, { call, put }: DvaApi) {
+      let data = [
+        {
+          key: 2,
+          name: 'Joe Black',
+          age: 32,
+          address: 'Sidney No. 1 Lake Park',
+        },
+      ]
+      try {
+        const dataRes = yield call(queryServices.getQueryData, { ...query })
+        if (checkResCode(dataRes)) {
+          data = _.cloneDeep(_.get(dataRes, 'data.data'))
+        }
+      } catch (e) {
+        console.log('query/getQueryData 出错', e)
+      } finally {
+        yield put({ type: SET_QUERY_DATA, payload: { data } })
+      }
+    },
+
+    // 初始化
+    *init(__: void, { call, put, select }: DvaApi) {
+      console.time('query/init')
+      const query = yield select((state: QueryState): any => state.query.get('query').toJS())
+      let queryParams: QueryParams = [
+        {
+          title: '编号',
+          type: 'input',
+          name: 'id',
+          value: '1',
+        },
+      ]
+      try {
+        const queryParamsRes = yield call(queryServices.getQueryParams)
+        if (checkResCode(queryParamsRes)) {
+          queryParams = _.cloneDeep(_.get(queryParamsRes, 'data.queryParams'))
+        }
+      } catch (e) {
+        console.log('query/init 出错 ===> ', e)
+      } finally {
+        yield put({ type: SET_QUERY_PARAMS, payload: { queryParams } })
+        yield put({ type: 'getTotalStatus', payload: { query } })
+        yield put({ type: 'getQueryData', payload: { query } })
+      }
+    },
+
+    *fetch(payload: any, { call }: DvaApi) {
+      console.log('query/fetch payload ===> ', payload)
+    },
+
+    *add(payload: any, { call }: DvaApi) {
+      console.log('query/add payload ===> ', payload)
+      console.log('新增操作')
+    },
+
+    *remove(payload: any, { call }: DvaApi) {
+      console.log('query/remove payload ===> ', payload)
+      console.log('删除操作')
+    },
+
+    *update(payload: any, { call }: DvaApi) {
+      console.log('query/update payload ===> ', payload)
+      console.log('更新操作')
+    },
+
+    *setParams(payload: any, { call }: DvaApi) {
+      console.log('query/setParams payload ===> ', payload)
+      console.log('配置参数')
+    },
+
+    // 批量操作
+    *handleBatchOp(payload: any, { call, put }: DvaApi) {
+      console.log('query/handleBatchOp payload ===> ', payload)
+      console.log('设置批量操作')
+    },
+  },
+
+  reducers: {
+    SET_TOTAL_STATUS(state: any, { payload }) {
+      return state.set('totalStatus', fromJS(payload.totalStatus))
+    },
+
+    SET_QUERY_PARAMS(state: any, { payload }) {
+      return state.set('queryParams', fromJS(payload.queryParams))
+    },
+
+    SET_QUERY_DATA(state: any, { payload }) {
+      return state.set('data', fromJS(payload.data))
+    },
+  },
 }

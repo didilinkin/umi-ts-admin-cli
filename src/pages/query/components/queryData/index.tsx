@@ -3,15 +3,12 @@ import styled from 'styled-components'
 import { darken } from 'polished'
 import get from 'lodash/get'
 
-import {
-  TotalStatus,
-  TotalStateItem,
-} from '../../types'
+import { TotalStatus, TotalStateItem } from '../../types'
 
 interface IProps {
-  dispatch: () => void,
-  loading: boolean,
-  totalStatus: TotalStatus,
+  dispatch: () => void
+  loading: boolean
+  totalStatus: TotalStatus
 }
 
 const QueryDataBox = styled.div`
@@ -21,7 +18,7 @@ const QueryDataBox = styled.div`
   border-style: solid;
   border-color: rgba(204, 204, 204, 1);
   border-radius: 4px;
-  >div.cursor {
+  > div.cursor {
     flex: 1;
     text-align: center;
     cursor: pointer;
@@ -29,16 +26,21 @@ const QueryDataBox = styled.div`
       background-color: ${darken(0.1, 'rgba(204, 204, 204, 0.176470588235294)')};
     }
     div {
-      margin: .5rem 0;
-      p.title { color: #666666 }
-      p.value { margin: 0; font-weight: bold; color: #0066FF }
+      margin: 0.5rem 0;
+      p.title {
+        color: #666666;
+      }
+      p.value {
+        margin: 0;
+        font-weight: bold;
+        color: #0066ff;
+      }
     }
   }
-
 `
 
 export default class QueryData extends PureComponent<IProps, {}> {
-  render () {
+  render() {
     const totalStatus = get(this.props, 'totalStatus').toJS()
     return (
       <QueryDataBox>

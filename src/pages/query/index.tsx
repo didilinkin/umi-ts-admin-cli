@@ -9,40 +9,34 @@ import QueryForm from './components/queryForm'
 import QueryTable from './components/queryTable'
 
 // types
-import {
-  QueryState,
-  TotalStatus,
-  QueryParams,
-  DataItemType,
-} from './types'
+import { QueryState, TotalStatus, QueryParams, DataItemType } from './types'
 import { List } from 'immutable'
 
 // utils
 import setChildProps from './utils/setChildProps'
 
 interface IProps {
-  dispatch: () => void,
-  loading: boolean,
-  totalStatus: List<TotalStatus>, // Immutable
-  queryParams: List<QueryParams>, // Immutable
-  data: List<DataItemType>, // Immutable
+  dispatch: () => void
+  loading: boolean
+  totalStatus: List<TotalStatus> // Immutable
+  queryParams: List<QueryParams> // Immutable
+  data: List<DataItemType> // Immutable
 }
 
 interface IState {
-  visible: boolean,
+  visible: boolean
+  modalType: 'create' | 'update'
 }
 
-@connect(
-  (state: QueryState) => ({
-    dispatch: state.dispatch,
-    loading: state.loading.global,
-    totalStatus: state.query.get('totalStatus'),
-    queryParams: state.query.get('queryParams'),
-    data: state.query.get('data'),
-  })
-)
+@connect((state: QueryState) => ({
+  dispatch: state.dispatch,
+  loading: state.loading.global,
+  totalStatus: state.query.get('totalStatus'),
+  queryParams: state.query.get('queryParams'),
+  data: state.query.get('data'),
+}))
 export default class Query extends React.Component<IProps, IState> {
-  render () {
+  render() {
     return (
       <DocumentTitle title="查询页面">
         <>

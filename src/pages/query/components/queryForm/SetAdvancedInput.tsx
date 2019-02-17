@@ -1,14 +1,6 @@
 // 根据 传入的配置参数, 返回不同的 搜索项目
 import React from 'react'
-import {
-  Row,
-  Col,
-  Form,
-  DatePicker,
-  Select,
-  Input,
-  InputNumber,
-} from 'antd'
+import { Row, Col, Form, DatePicker, Select, Input, InputNumber } from 'antd'
 import _ from 'lodash'
 
 import { QueryParamsItem, SelectItem } from '../../types'
@@ -18,15 +10,12 @@ const { Option } = Select
 const { MonthPicker, RangePicker, WeekPicker } = DatePicker
 
 interface IParams {
-  queryParams: QueryParamsItem[],
-  getFieldDecorator: (name: string) => any,
-  cbFunc: (params: any) => void,
+  queryParams: QueryParamsItem[]
+  getFieldDecorator: (name: string) => any
+  cbFunc: (params: any) => void
 }
 
-const checkFormItemType = (
-  item: QueryParamsItem,
-  cbFunc: (params: any) => void,
-) => {
+const checkFormItemType = (item: QueryParamsItem, cbFunc: (params: any) => void) => {
   switch (item.type) {
     case 'input':
       return <Input placeholder={`请输入 ${item.title}`} style={{ width: '100%' }} />
@@ -46,13 +35,17 @@ const checkFormItemType = (
     case 'select':
       return (
         <Select placeholder={`请选择 ${item.title}`} style={{ width: '100%' }}>
-          {!!item.selectGroup && item.selectGroup.length > 0
-            ? item.selectGroup.map((selectItem: SelectItem) => (
+          {!!item.selectGroup && item.selectGroup.length > 0 ? (
+            item.selectGroup.map((selectItem: SelectItem) => (
               <Option key={selectItem.name} value={selectItem.title}>
                 {selectItem.title}
               </Option>
             ))
-            : <Option disabled={true} value={`${item.name}-0`}>状态错误</Option>}
+          ) : (
+            <Option disabled={true} value={`${item.name}-0`}>
+              状态错误
+            </Option>
+          )}
         </Select>
       )
 
@@ -65,11 +58,7 @@ const checkFormItemType = (
   }
 }
 
-export default ({
-  queryParams,
-  getFieldDecorator,
-  cbFunc,
-}: IParams) => {
+export default ({ queryParams, getFieldDecorator, cbFunc }: IParams) => {
   const queryParamsList = _.chunk(queryParams, 3)
   return (
     <>
@@ -78,9 +67,7 @@ export default ({
           {itemList.map((item: QueryParamsItem) => (
             <Col md={8} sm={24} key={item.name}>
               <FormItem label={item.title}>
-                {getFieldDecorator(item.name)(
-                  checkFormItemType(item, cbFunc)
-                )}
+                {getFieldDecorator(item.name)(checkFormItemType(item, cbFunc))}
               </FormItem>
             </Col>
           ))}

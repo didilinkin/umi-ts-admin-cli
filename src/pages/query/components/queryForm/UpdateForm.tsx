@@ -1,14 +1,5 @@
 import React from 'react'
-import {
-  Form,
-  Modal,
-  Select,
-  DatePicker,
-  Radio,
-  Input,
-  Button,
-  Steps,
-} from 'antd'
+import { Form, Modal, Select, DatePicker, Radio, Input, Button, Steps } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 
 const { Step } = Steps
@@ -18,17 +9,17 @@ const { TextArea } = Input
 const RadioGroup = Radio.Group
 
 interface IUpdateFormProps extends FormComponentProps {
-  values: any,
-  updateModalVisible: any,
-  form: any,
-  handleUpdate?: any,
-  handleUpdateModalVisible?: any,
+  values: any
+  updateModalVisible: any
+  form: any
+  handleUpdate?: any
+  handleUpdateModalVisible?: any
 }
 
 class UpdateForm extends React.Component<IUpdateFormProps, any> {
   static defaultProps = {
-    handleUpdate: () => { },
-    handleUpdateModalVisible: () => { },
+    handleUpdate: () => {},
+    handleUpdateModalVisible: () => {},
     values: {},
   }
   formLayout = {
@@ -61,18 +52,17 @@ class UpdateForm extends React.Component<IUpdateFormProps, any> {
     const { form, handleUpdate } = this.props
     const { formVals: oldValue } = this.state
     form.validateFields((err, fieldsValue) => {
-      if (err) { return }
+      if (err) {
+        return
+      }
       const formVals = { ...oldValue, ...fieldsValue }
-      this.setState(
-        { formVals },
-        () => {
-          if (currentStep < 2) {
-            this.forward()
-          } else {
-            handleUpdate(formVals)
-          }
+      this.setState({ formVals }, () => {
+        if (currentStep < 2) {
+          this.forward()
+        } else {
+          handleUpdate(formVals)
         }
-      )
+      })
     })
   }
 

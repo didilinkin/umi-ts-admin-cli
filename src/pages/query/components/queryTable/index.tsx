@@ -7,19 +7,19 @@ import { List } from 'immutable'
 import { DataItemType } from '../../types'
 
 const TableBox = styled.div`
-  border-top: 1px solid rgba(204,204,204,1);
-  background-color: #FFF;
+  border-top: 1px solid rgba(204, 204, 204, 1);
+  background-color: #fff;
 `
 
 interface IProps extends Props {
-  data: List<DataItemType>,
+  data: List<DataItemType>
 }
 interface IState {
-  data: DataItemType[],
+  data: DataItemType[]
 }
 
 export default class QueryTable extends React.Component<IProps, IState> {
-  constructor (props: IProps) {
+  constructor(props: IProps) {
     super(props)
     this.state = {
       data: props.data.toJS(),

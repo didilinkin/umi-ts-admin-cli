@@ -33,7 +33,9 @@ const CreateForm = Form.create()((props: any) => {
   const { modalVisible, form, handleAdd, handleModalVisible } = props
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
-      if (err) { return }
+      if (err) {
+        return
+      }
       form.resetFields()
       handleAdd(fieldsValue)
     })
@@ -56,24 +58,24 @@ const CreateForm = Form.create()((props: any) => {
 })
 
 interface IFormProps extends FormComponentProps {
-  dispatch: (param: any) => void,
-  loading: boolean,
-  queryParams: List<QueryParamsItem>,
-  totalStatus: List<TotalStateItem>,
-  form: any,
-  query?: any, // 无法确定?
+  dispatch: (param: any) => void
+  loading: boolean
+  queryParams: List<QueryParamsItem>
+  totalStatus: List<TotalStateItem>
+  form: any
+  query?: any // 无法确定?
 }
 
 interface IFormState {
-  modalVisible: boolean,
-  updateModalVisible: boolean,
-  expandForm: boolean,
-  selectedRows: any[],
-  formValues: any, // values
-  stepFormValues: object,
+  modalVisible: boolean
+  updateModalVisible: boolean
+  expandForm: boolean
+  selectedRows: any[]
+  formValues: any // values
+  stepFormValues: object
   // props => state
-  queryParams: QueryParamsItem[],
-  totalStatus: TotalStateItem[],
+  queryParams: QueryParamsItem[]
+  totalStatus: TotalStateItem[]
 }
 
 class QueryForm extends PureComponent<IFormProps, IFormState> {
@@ -333,7 +335,7 @@ class QueryForm extends PureComponent<IFormProps, IFormState> {
         {SetAdvancedInput({
           queryParams: _.filter(
             this.state.queryParams,
-            (item: QueryParamsItem) => item.name !== 'id' && item.name !== 'status',
+            (item: QueryParamsItem) => item.name !== 'id' && item.name !== 'status'
           ),
           getFieldDecorator,
           cbFunc: this.AdvancedFormCbFunc,
