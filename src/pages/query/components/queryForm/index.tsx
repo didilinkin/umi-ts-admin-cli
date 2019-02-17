@@ -101,20 +101,20 @@ class QueryForm extends PureComponent<IFormProps, IFormState> {
     }
   }
 
-  shouldComponentUpdate(nextProps: IFormProps, nextState: IFormState): boolean {
-    if (nextState.queryParams.size > 0 && !!nextState.renderLoading) {
-      this.setState(
-        {
-          queryParams: nextProps.queryParams,
-          renderLoading: false,
-        },
-        () => console.log('query-shouldComponentUpdate: 更新 queryParams')
-      )
-    }
-    // return nextState.queryParams.size > 0 && !!nextState.renderLoading
-    // 因为本组件体积较大, 不适合阻止 render 渲染 (比如 控件改变等功能)
-    return true
-  }
+  // shouldComponentUpdate(nextProps: IFormProps, nextState: IFormState): boolean {
+  //   if (nextState.queryParams.size > 0 && !!nextState.renderLoading) {
+  //     this.setState(
+  //       {
+  //         queryParams: nextProps.queryParams,
+  //         renderLoading: false,
+  //       },
+  //       () => console.log('query-shouldComponentUpdate: 更新 queryParams')
+  //     )
+  //   }
+  //   // return nextState.queryParams.size > 0 && !!nextState.renderLoading
+  //   // 因为本组件体积较大, 不适合阻止 render 渲染 (比如 控件改变等功能)
+  //   return true
+  // }
 
   // 渲染 简单表单
   renderSimpleForm() {

@@ -1,5 +1,7 @@
-# Umi-TS-cli
+# umi-ts-admin
 > Admin 后台管理系统, 将支持 SAAS 系统
+>
+> 支持 区块功能 (需要配置 menu)
 
 ## 预览项目
 

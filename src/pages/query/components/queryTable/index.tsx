@@ -3,7 +3,7 @@ import { Table } from 'antd'
 import _ from 'lodash'
 import styled from 'styled-components'
 
-import { List } from 'immutable'
+import { List, is } from 'immutable'
 import { DataItemType } from '../../types'
 
 const TableBox = styled.div`
@@ -15,14 +15,23 @@ interface IProps extends Props {
   data: List<DataItemType>
 }
 interface IState {
-  data: DataItemType[]
+  data: List<DataItemType>
 }
 
 export default class QueryTable extends React.Component<IProps, IState> {
+  static getDerivedStateFromProps(nextProps: IProps, prevState: IState) {
+    if (!is(prevState.data, nextProps.data)) {
+      return {
+        data: nextProps.data,
+      }
+    }
+    return null
+  }
+
   constructor(props: IProps) {
     super(props)
     this.state = {
-      data: props.data.toJS(),
+      data: List<DataItemType>(),
     }
   }
 
@@ -60,9 +69,16 @@ export default class QueryTable extends React.Component<IProps, IState> {
       },
     }
 
+    const tableData = this.state.data.toJS()
+
     return (
       <TableBox>
-        <Table columns={columns} rowSelection={rowSelection} dataSource={this.state.data} />
+        <Table
+          loading={this.props.loading}
+          columns={columns}
+          rowSelection={rowSelection}
+          dataSource={tableData}
+        />
       </TableBox>
     )
   }
