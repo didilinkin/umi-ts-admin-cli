@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react'
 import styled from 'styled-components'
 import _ from 'lodash'
-import { List } from 'immutable'
+import { List, Map, is } from 'immutable'
 import {
   Form,
   Row,
@@ -61,9 +61,8 @@ interface IFormProps extends FormComponentProps {
   dispatch: (param: any) => void
   loading: boolean
   queryParams: List<QueryParamsItem>
-  totalStatus: List<TotalStateItem>
   form: any
-  query?: any // 无法确定?
+  query?: any
 }
 
 interface IFormState {
@@ -74,11 +73,20 @@ interface IFormState {
   formValues: any // values
   stepFormValues: object
   // props => state
-  queryParams: QueryParamsItem[]
-  totalStatus: TotalStateItem[]
+  queryParams: List<QueryParamsItem>
+  renderLoading: boolean
 }
 
 class QueryForm extends PureComponent<IFormProps, IFormState> {
+  static getDerivedStateFromProps(nextProps: IFormProps, prevState: IFormState) {
+    if (!is(prevState.queryParams, nextProps.queryParams)) {
+      return {
+        queryParams: nextProps.queryParams,
+      }
+    }
+    return null
+  }
+
   constructor(props: IFormProps) {
     super(props)
     this.state = {
@@ -88,19 +96,33 @@ class QueryForm extends PureComponent<IFormProps, IFormState> {
       selectedRows: [],
       formValues: {},
       stepFormValues: {},
-      queryParams: props.queryParams.toJS(),
-      totalStatus: _.filter(
-        props.totalStatus.toJS(),
-        (item: TotalStateItem) => item.name !== 'total'
-      ),
+      queryParams: List<QueryParamsItem>(),
+      renderLoading: true,
     }
   }
+
+  shouldComponentUpdate(nextProps: IFormProps, nextState: IFormState): boolean {
+    if (nextState.queryParams.size > 0 && !!nextState.renderLoading) {
+      this.setState(
+        {
+          queryParams: nextProps.queryParams,
+          renderLoading: false,
+        },
+        () => console.log('query-shouldComponentUpdate: 更新 queryParams')
+      )
+    }
+    // return nextState.queryParams.size > 0 && !!nextState.renderLoading
+    // 因为本组件体积较大, 不适合阻止 render 渲染 (比如 控件改变等功能)
+    return true
+  }
+
   // 渲染 简单表单
   renderSimpleForm() {
-    const { totalStatus } = this.state
     const {
       form: { getFieldDecorator },
     } = this.props
+    const status: any = this.state.queryParams.find((item: any) => item.get('name') === 'status')
+    const statusList = !!status ? _.uniqBy(status.get('selectGroup').toJS(), 'name') : []
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
@@ -111,19 +133,17 @@ class QueryForm extends PureComponent<IFormProps, IFormState> {
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="使用状态">
-              {getFieldDecorator('status')(
+              {getFieldDecorator('status', {})(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
-                  {!!totalStatus && totalStatus.length > 0 ? (
-                    totalStatus.map((item: TotalStateItem) => (
-                      <Option key={item.name} value={item.value}>
-                        {' '}
-                        {item.title}{' '}
+                  {!!status ? (
+                    statusList.map((item: TotalStateItem) => (
+                      <Option key={`${item.name}`} value={item.title}>
+                        {item.title}
                       </Option>
                     ))
                   ) : (
-                    <Option disabled={true} value="0">
-                      {' '}
-                      状态错误{' '}
+                    <Option disabled={true} key="total" value="总量">
+                      状态错误
                     </Option>
                   )}
                 </Select>
@@ -286,6 +306,9 @@ class QueryForm extends PureComponent<IFormProps, IFormState> {
     const {
       form: { getFieldDecorator },
     } = this.props
+    const queryParams = this.state.queryParams.toJS()
+    const status: any = this.state.queryParams.find((item: any) => item.get('name') === 'status')
+    const statusList = !!status ? _.uniqBy(status.get('selectGroup').toJS(), 'name') : []
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
@@ -296,19 +319,17 @@ class QueryForm extends PureComponent<IFormProps, IFormState> {
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="使用状态">
-              {getFieldDecorator('status')(
+              {getFieldDecorator('status', {})(
                 <Select placeholder="请选择" style={{ width: '100%' }}>
-                  {!!this.state.totalStatus && this.state.totalStatus.length > 0 ? (
-                    this.state.totalStatus.map((item: TotalStateItem) => (
-                      <Option key={item.name} value={item.value}>
-                        {' '}
-                        {item.title}{' '}
+                  {!!status ? (
+                    statusList.map((item: TotalStateItem) => (
+                      <Option key={`${item.name}`} value={item.title}>
+                        {item.title}
                       </Option>
                     ))
                   ) : (
-                    <Option disabled={true} value="0">
-                      {' '}
-                      状态错误{' '}
+                    <Option disabled={true} key="total" value="总量">
+                      状态错误
                     </Option>
                   )}
                 </Select>
@@ -334,7 +355,7 @@ class QueryForm extends PureComponent<IFormProps, IFormState> {
         {/* 配置 支持自定义的 参数功能 */}
         {SetAdvancedInput({
           queryParams: _.filter(
-            this.state.queryParams,
+            queryParams,
             (item: QueryParamsItem) => item.name !== 'id' && item.name !== 'status'
           ),
           getFieldDecorator,

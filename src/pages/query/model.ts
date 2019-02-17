@@ -1,10 +1,10 @@
 import { fromJS, Map } from 'immutable'
 import _ from 'lodash'
 
-import { TotalStatus, QueryParams } from '../types'
-import { BLOCK_PATH } from '../config'
-import checkResCode from '../utils/checkResCode'
-import * as queryServices from '../service'
+import { TotalStatus, QueryParams } from './types'
+import { BLOCK_PATH } from './config'
+import checkResCode from './utils/checkResCode'
+import * as queryServices from './service'
 
 interface QueryState extends StoreType {
   query: Map<string, any>
@@ -21,8 +21,15 @@ const SET_QUERY_DATA = 'SET_QUERY_DATA'
 
 const initState = fromJS({
   query: {},
-  totalStatus: [],
-  queryParams: [],
+  totalStatus: [{ title: '总量', name: 'total', value: 0 }],
+  queryParams: [
+    {
+      title: '编号',
+      type: 'input',
+      name: 'id',
+      value: '1',
+    },
+  ],
   queryTabs: ['id', 'status'],
   data: [],
 })

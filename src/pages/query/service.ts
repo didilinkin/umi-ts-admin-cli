@@ -1,5 +1,4 @@
 import request from 'umi-request'
-import isEmpty from 'lodash/isEmpty'
 
 import {
   BLOCK_PATH,
