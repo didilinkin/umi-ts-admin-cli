@@ -1,14 +1,15 @@
 import React, { PureComponent } from 'react'
 import styled from 'styled-components'
+import { Spin } from 'antd'
 import { darken } from 'polished'
 import get from 'lodash/get'
+import assign from 'lodash/assign'
 
 import { TotalStatus, TotalStateItem } from '../../types'
 
-interface IProps {
-  dispatch: () => void
-  loading: boolean
+interface IProps extends Props {
   totalStatus: TotalStatus
+  statusActive: string,
 }
 
 const QueryDataBox = styled.div`
@@ -40,19 +41,48 @@ const QueryDataBox = styled.div`
 `
 
 export default class QueryData extends PureComponent<IProps, {}> {
+  handleQueryParam = (item: TotalStateItem): void => {
+    const statusParam = {
+      title: '状态',
+      name: 'status',
+      value: 'wait',
+    }
+    this.props.dispatch({
+      type: 'query/setQuery',
+      payload: {
+        status: assign({}, statusParam, {
+          value: item.name,
+        }),
+      },
+    })
+    this.props.dispatch({
+      type: 'query/setStatusActive',
+      payload: {
+        statusActive: item.name,
+      },
+    })
+  }
+
   render() {
     const totalStatus = get(this.props, 'totalStatus').toJS()
     return (
-      <QueryDataBox>
-        {totalStatus.map((item: TotalStateItem) => (
-          <div className="cursor" key={item.name}>
-            <div>
-              <p className="title">{item.title}</p>
-              <p className="value">{item.value}</p>
+      <Spin spinning={this.props.loading}>
+        <QueryDataBox>
+          {totalStatus.map((item: TotalStateItem) => (
+            <div className="cursor" key={item.name} onClick={() => this.handleQueryParam(item)}>
+              <div>
+                <p className="title">{item.title}</p>
+                <p
+                  className="value"
+                  style={{ color: this.props.statusActive === item.name ? 'red' : '#0066ff' }}
+                >
+                  {item.value}
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
-      </QueryDataBox>
+          ))}
+        </QueryDataBox>
+      </Spin>
     )
   }
 }

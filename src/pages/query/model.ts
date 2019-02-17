@@ -1,7 +1,7 @@
 import { fromJS, Map } from 'immutable'
 import _ from 'lodash'
 
-import { TotalStatus, QueryParams } from './types'
+import { TotalStatus, QueryParams, SetQuery, QueryParamsItem } from './types'
 import { BLOCK_PATH } from './config'
 import checkResCode from './utils/checkResCode'
 import * as queryServices from './service'
@@ -9,15 +9,18 @@ import * as queryServices from './service'
 interface QueryState extends StoreType {
   query: Map<string, any>
 }
-interface CallUpdate {
-  query: {
-    [propName: string]: any
+interface StatusActive {
+  payload: {
+    statusActive: string
   }
 }
 
 const SET_TOTAL_STATUS = 'SET_TOTAL_STATUS'
 const SET_QUERY_PARAMS = 'SET_QUERY_PARAMS'
 const SET_QUERY_DATA = 'SET_QUERY_DATA'
+const UPDATE_QUERY = 'UPDATE_QUERY'
+const UPDATE_QUERY_TAGS = 'UPDATE_QUERY_TAGS'
+const SET_STATUS_ACTIVE = 'SET_STATUS_ACTIVE'
 
 const initState = fromJS({
   query: {},
@@ -30,8 +33,9 @@ const initState = fromJS({
       value: '1',
     },
   ],
-  queryTabs: ['id', 'status'],
+  queryTags: [{ title: '状态', name: 'status', value: 'wait' }],
   data: [],
+  statusActive: '',
 })
 
 export default {
@@ -53,10 +57,10 @@ export default {
 
   effects: {
     // atom: 获取 全部状态
-    *getTotalStatus({ query }: CallUpdate, { call, put }: DvaApi) {
+    *getTotalStatus({ payload }, { call, put }: DvaApi) {
       let totalStatus: TotalStatus = [{ title: '总量', name: 'total', value: 0 }]
       try {
-        const totalStatusRes = yield call(queryServices.getTotalStatus, { ...query })
+        const totalStatusRes = yield call(queryServices.getTotalStatus, { ...payload.query })
         if (checkResCode(totalStatusRes)) {
           totalStatus = _.cloneDeep(_.get(totalStatusRes, 'data.totalStatus'))
         }
@@ -68,7 +72,7 @@ export default {
     },
 
     // atom: 更新 表格数据
-    *getQueryData({ query }: CallUpdate, { call, put }: DvaApi) {
+    *getQueryData({ payload }, { call, put }: DvaApi) {
       let data = [
         {
           key: 2,
@@ -78,7 +82,7 @@ export default {
         },
       ]
       try {
-        const dataRes = yield call(queryServices.getQueryData, { ...query })
+        const dataRes = yield call(queryServices.getQueryData, { ...payload.query })
         if (checkResCode(dataRes)) {
           data = _.cloneDeep(_.get(dataRes, 'data.data'))
         }
@@ -113,6 +117,41 @@ export default {
         yield put({ type: 'getTotalStatus', payload: { query } })
         yield put({ type: 'getQueryData', payload: { query } })
       }
+    },
+
+    *setQuery({ payload }: SetQuery, { put, select }: DvaApi) {
+      let query = yield select((state: QueryState): any => state.query.get('query').toJS())
+      query = _.assign({}, query, payload)
+      yield put({ type: 'getTotalStatus', payload: { query } })
+      yield put({ type: 'getQueryData', payload: { query } })
+      yield put({ type: UPDATE_QUERY, payload: { query } })
+      yield put({ type: 'setQueryTags', payload: { query } })
+    },
+
+    // 去重, 以前面的为准
+    *setQueryTags({ payload }: SetQuery, { put }: DvaApi) {
+      const queryTags = [{ title: '编号', name: 'id', value: '007' }]
+      _.forIn(payload.query, (value: QueryParamsItem, key: string) => queryTags.push(value))
+      yield put({
+        type: UPDATE_QUERY_TAGS,
+        payload: {
+          queryTags: _.reverse(_.uniqBy(_.reverse(queryTags), 'name')),
+        },
+      })
+    },
+
+    *setStatusActive({ payload }: StatusActive, { put }: DvaApi) {
+      yield put({
+        type: SET_STATUS_ACTIVE,
+        payload: {
+          statusActive: payload.statusActive,
+        },
+      })
+    },
+
+    *resetQuery(__: void, { put }: DvaApi) {
+      // 重置操作
+      // 清理 active
     },
 
     *fetch(payload: any, { call }: DvaApi) {
@@ -157,6 +196,18 @@ export default {
 
     SET_QUERY_DATA(state: any, { payload }) {
       return state.set('data', fromJS(payload.data))
+    },
+
+    UPDATE_QUERY(state: any, { payload }) {
+      return state.set('query', fromJS(payload.query))
+    },
+
+    UPDATE_QUERY_TAGS(state: any, { payload }) {
+      return state.set('queryTags', fromJS(payload.queryTags))
+    },
+
+    SET_STATUS_ACTIVE(state: any, { payload }) {
+      return state.set('statusActive', fromJS(payload.statusActive))
     },
   },
 }

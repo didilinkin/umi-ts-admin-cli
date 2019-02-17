@@ -20,7 +20,7 @@ declare interface DvaApi {
 }
 
 declare interface Props {
-  dispatch: (params: any) => void
+  dispatch: (params: { type: string; payload?: any }) => void
   loading: boolean
 }
 

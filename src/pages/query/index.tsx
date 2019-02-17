@@ -20,6 +20,7 @@ interface IProps {
   totalStatus: List<TotalStatus> // Immutable
   queryParams: List<QueryParams> // Immutable
   data: List<DataItemType> // Immutable
+  statusActive: string,
 }
 
 interface IState {
@@ -33,6 +34,7 @@ interface IState {
   totalStatus: state.query.get('totalStatus'),
   queryParams: state.query.get('queryParams'),
   data: state.query.get('data'),
+  statusActive: state.query.get('statusActive'),
 }))
 export default class Query extends React.Component<IProps, IState> {
   render() {
@@ -40,7 +42,7 @@ export default class Query extends React.Component<IProps, IState> {
       <DocumentTitle title="查询页面">
         <>
           {/* 状态数据展示 */}
-          <QueryData {...pick(this.props, setChildProps(['totalStatus']))} />
+          <QueryData {...pick(this.props, setChildProps(['totalStatus', 'statusActive']))} />
 
           {/* 搜索项 */}
           <QueryForm {...pick(this.props, setChildProps(['queryParams']))} />

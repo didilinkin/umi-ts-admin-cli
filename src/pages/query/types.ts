@@ -49,3 +49,12 @@ export interface ResType {
   status?: number
   version?: string
 }
+
+export interface SetQuery {
+  payload: {
+    id?: string
+    status?: string
+    query?: any
+    [propName: string]: any
+  }
+}
