@@ -11,6 +11,16 @@
  * @param {string} subMsg           // 对开发者反馈信息
  * @param {number} status           // 状态码
  */
+
+// a00d2315-3b83-48c7-9cf1-a8963d1a69cc
+
+// error 错误 类型
+// {
+//   "status": 6000,
+//   "subMsg": "Unknown column 'string' in 'order clause'",
+//   "msg": "数据查询异常，请检查参数"
+// }
+
 export default ({
   type,
   data,

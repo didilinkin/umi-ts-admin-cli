@@ -402,6 +402,7 @@ class QueryForm extends PureComponent<IFormProps, IFormState> {
 
   render() {
     const { loading, queryTags } = this.props
+    // debugger
     const { selectedRows, modalVisible, updateModalVisible, stepFormValues } = this.state
     const menu = (
       <Menu onClick={this.handleMenuClick} selectedKeys={[]}>

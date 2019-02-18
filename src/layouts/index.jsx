@@ -14,10 +14,16 @@ import get from 'lodash/get'
 const { Content, Header } = Layout
 
 class BasicLayout extends Component {
+  static getDerivedStateFromError(error) {
+    // Update state so the next render will show the fallback UI.
+    return { hasError: true }
+  }
+
   constructor(props) {
     super(props)
     this.state = {
       collapsed: false,
+      hasError: false,
     }
   }
 
@@ -30,42 +36,64 @@ class BasicLayout extends Component {
   render() {
     const { children, location } = this.props
     const { collapsed } = this.state
-    return (
-      // TODO: 根据 path 转换得到 menu中的 name
-      <DocumentTitle
-        title={
-          get(this, 'props.location.pathname') === '/'
-            ? 'umi 脚手架'
-            : get(this, 'props.location.pathname')
-        }
-      >
-        <Layout>
-          <SiderMenu
-            logo={logo}
-            collapsed={collapsed}
-            menuData={getMenuData()}
-            location={location}
-            onCollapse={this.handleMenuCollapse}
-          />
+
+    try {
+      return (
+        // TODO: 根据 path 转换得到 menu中的 name
+        <DocumentTitle
+          title={
+            get(this, 'props.location.pathname') === '/'
+              ? 'umi 脚手架'
+              : get(this, 'props.location.pathname')
+          }
+        >
           <Layout>
-            <Header style={{ padding: 0 }}>
-              <GlobalHeader
-                logo={logo}
-                collapsed={collapsed}
-                currentUser={{
-                  name: 'Serati Ma',
-                  avatar: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
-                  userid: '00000001',
-                  notifyCount: 12,
-                }}
-                onCollapse={this.handleMenuCollapse}
-              />
-            </Header>
-            <Content style={{ margin: '24px 24px 0', height: '100%' }}>{children}</Content>
+            <SiderMenu
+              logo={logo}
+              collapsed={collapsed}
+              menuData={getMenuData()}
+              location={location}
+              onCollapse={this.handleMenuCollapse}
+            />
+            <Layout>
+              <Header style={{ padding: 0 }}>
+                <GlobalHeader
+                  logo={logo}
+                  collapsed={collapsed}
+                  currentUser={{
+                    name: 'Serati Ma',
+                    avatar: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
+                    userid: '00000001',
+                    notifyCount: 12,
+                  }}
+                  onCollapse={this.handleMenuCollapse}
+                />
+              </Header>
+              <Content style={{ margin: '24px 24px 0', height: '100%' }}>
+                {this.state.hasError ? (
+                  // You can render any custom fallback UI
+                  <h1> React 错误边界</h1>
+                ) : (
+                    children
+                  )}
+              </Content>
+            </Layout>
           </Layout>
-        </Layout>
-      </DocumentTitle>
-    )
+        </DocumentTitle>
+      )
+    } catch {
+      return (
+        <DocumentTitle
+          title={
+            get(this, 'props.location.pathname') === '/'
+              ? 'umi 脚手架'
+              : get(this, 'props.location.pathname')
+          }
+        >
+          <h1> try/catch 错误拦截</h1>
+        </DocumentTitle>
+      )
+    }
   }
 }
 

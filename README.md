@@ -48,14 +48,15 @@ v1.10.1
 * 强检查 配置 - success
 * 404 基础页面 - success
 * 动态 title 功能 (react-document-title) - 基础功能 (展示 path部分) - success
-* git hook 配置
+* git hook 配置 - success
+* 动态 title 功能 (react-document-title) - name 匹配功能 (如 中文名称, 也要支持 国际化) - success
 * Typescript 文件 暂时无法使用 jest 测试用例, 需要在官方实例中测试
 * 部分组件没有改为 .tsx 格式, 需要跟进修改 (3个模块)
-* 动态 title 功能 (react-document-title) - name 匹配功能 (如 中文名称, 也要支持 国际化)
 * 通过命令行添加 block后, block 自动添加
 * style lint 功能
 * 国际化部分
 * 404 页面具体配置
+* umi block 更改 config 到 业务模块内, 修改调用方式
 
 ## 关于 格式化 (ESLint + TSLint + Prettier) [说明文档](./docs/format.md)
 
@@ -64,8 +65,8 @@ v1.10.1
 * 代码检测实现 - done
 * 项目目录结构规范化实现及说明 - done
 * Reactjs 性能优化及最佳实践实现
-* 报错异常前后端标准化实现
-* 查询页面标准化组件实现
+* 报错异常前后端标准化实现 - 待检测
+* 查询页面标准化组件实现 - done
 * 树形组件标准化实现
 * 用户-角色-权限前端标准化实现及优化
 * 权限前后端配套实现

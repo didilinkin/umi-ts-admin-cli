@@ -1,7 +1,7 @@
 import { fromJS, Map } from 'immutable'
 import _ from 'lodash'
 
-import { TotalStatus, QueryParams, SetQuery, QueryParamsItem } from './types'
+import { TotalStatus, QueryParams, SetQuery, QueryParamsItem, QueryInitState } from './types'
 import { BLOCK_PATH } from './config'
 import checkResCode from './utils/checkResCode'
 import * as queryServices from './service'
@@ -23,6 +23,15 @@ const UPDATE_QUERY_TAGS = 'UPDATE_QUERY_TAGS'
 const SET_STATUS_ACTIVE = 'SET_STATUS_ACTIVE'
 
 const initState = fromJS({
+  // 排序 string
+  orders: 'descend', // 'descend' 降序, 'ascend' 升序
+  // 分页参数 { 当前的页码, 页面条数 }
+  // RES: 总条数 (总页数由组件计算)
+  pagination: {
+    total: 0, // res
+    current: 1,
+    pageSize: 10,
+  },
   query: {},
   totalStatus: [{ title: '总量', name: 'total', value: 0 }],
   queryParams: [
@@ -122,6 +131,7 @@ export default {
     *setQuery({ payload }: SetQuery, { put, select }: DvaApi) {
       let query = yield select((state: QueryState): any => state.query.get('query').toJS())
       query = _.assign({}, query, payload)
+
       yield put({ type: 'getTotalStatus', payload: { query } })
       yield put({ type: 'getQueryData', payload: { query } })
       yield put({ type: UPDATE_QUERY, payload: { query } })

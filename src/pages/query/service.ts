@@ -1,4 +1,5 @@
 import request from 'umi-request'
+import qs from 'qs'
 
 import {
   BLOCK_PATH,
@@ -14,7 +15,11 @@ export async function getQueryParams(): Promise<any> {
 }
 
 export async function getTotalStatus(params?: any): Promise<any> {
-  console.log('service-query-获取 全部状态数据: param ===> ', params)
+  console.log(
+    'service-query-获取 全部状态数据: param ===> ',
+    // qs.stringify(params),
+    params
+  )
   return request(`${API_HEAD}${API_GET_TOTAL_STATUS}`, {
     params,
   })

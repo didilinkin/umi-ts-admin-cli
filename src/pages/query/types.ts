@@ -58,3 +58,52 @@ export interface SetQuery {
     [propName: string]: any
   }
 }
+
+export interface QueryInitState {
+  orders: 'desc' | 'asc' //
+  pagination: {
+    total: number // 0
+    current: number // 1
+    pageSize: number // 10
+  }
+  query: {
+    status?: string
+  }
+  totalStatus: TotalStateItem[]
+  queryTags: TotalStateItem[]
+  queryParams: QueryParamsItem[]
+  data: any
+  statusActive: string
+}
+
+// const params = {
+//   orders: {
+//     name: 'orders',
+//     type: 'desc',
+//   },
+//   pagination: {
+//     current: 1,
+//     pageSize: 15,
+//   },
+//   query: {
+//     status: 'success',
+//     name: "刘志强",
+//   },
+// }
+
+export interface QueryServiceParams {
+  type: 0 | 1 // 全量查询
+  orders: {
+    name: 'orders'
+    type: 'desc' | 'asc'
+  }
+  pagination: {
+    current: number
+    pageSize: number
+  }
+  query: {
+    id?: string
+    status?: string
+    [propName: string]: any
+  }
+}

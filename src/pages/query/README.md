@@ -67,3 +67,11 @@ state: {
 * models/ => model.ts 
 * 当 totalStatus 为空时 渲染 '全量'一个 - done
 * closeTag: dispatch 操作 tag, 发起请求?
+* 排序条件
+* 分页
+* 批量操作 用JSON 配置还是 放开一个 接口 渲染 config 写好的 组件 model 合并
+* 在接口交互时, 将 query 通过方法做一次包装, 转换为 后端需要的格式
+* 对 提交的参数做 qs 转 string
+* 新增 排序 & 分页 参数
+* query 统一约束 请求时的 params 参数格式, 配置 types
+* 测试 接口错误时, 页面反馈
