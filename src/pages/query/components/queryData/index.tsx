@@ -9,7 +9,7 @@ import { TotalStatus, TotalStateItem } from '../../types'
 
 interface IProps extends Props {
   totalStatus: TotalStatus
-  statusActive: string,
+  statusActive: string
 }
 
 const QueryDataBox = styled.div`

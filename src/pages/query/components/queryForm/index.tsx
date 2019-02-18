@@ -1,9 +1,10 @@
 import React, { PureComponent } from 'react'
 import styled from 'styled-components'
 import _ from 'lodash'
-import { List, Map, is } from 'immutable'
+import Immutable, { List, Map, is } from 'immutable'
 import {
   Form,
+  Alert,
   Row,
   Col,
   Input,
@@ -15,13 +16,14 @@ import {
   Card,
   Dropdown,
   Modal,
-  InputNumber,
   DatePicker,
+  Tag,
 } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 
 import UpdateForm from './UpdateForm'
 import SetAdvancedInput from './SetAdvancedInput'
+import BatchOp from './BatchOp'
 import styles from './style.less'
 import { TotalStateItem, QueryParamsItem } from '../../types'
 
@@ -57,12 +59,22 @@ const CreateForm = Form.create()((props: any) => {
   )
 })
 
+const QueryTagsBox = styled.div`
+  padding: 1rem;
+  background-color: #fff;
+  > span,
+  .ant-tag {
+    margin-right: 1rem;
+  }
+`
+
 interface IFormProps extends FormComponentProps {
   dispatch: (param: any) => void
   loading: boolean
   queryParams: List<QueryParamsItem>
   form: any
   query?: any
+  queryTags: List<QueryParamsItem>
 }
 
 interface IFormState {
@@ -384,10 +396,12 @@ class QueryForm extends PureComponent<IFormProps, IFormState> {
     return expandForm ? this.renderAdvancedForm() : this.renderSimpleForm()
   }
 
-  render() {
-    // const { getFieldDecorator } = this.props.form
-    const { loading } = this.props
+  closeTag = (e?: any, tagName?: string): void => {
+    console.log('关闭 tag: ===> ', tagName)
+  }
 
+  render() {
+    const { loading, queryTags } = this.props
     const { selectedRows, modalVisible, updateModalVisible, stepFormValues } = this.state
     const menu = (
       <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
@@ -409,28 +423,26 @@ class QueryForm extends PureComponent<IFormProps, IFormState> {
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
-            <div className={styles.tableListOperator}>
-              <span>
-                <Button>批量操作</Button>
-                <Dropdown overlay={menu}>
-                  <Button>
-                    更多操作 <Icon type="down" />
-                  </Button>
-                </Dropdown>
-              </span>
-            </div>
-
-            {/* 提示信息 */}
-            {/* <StandardTable
-              selectedRows={selectedRows}
-              loading={loading}
-              data={data}
-              columns={this.columns}
-              onSelectRow={this.handleSelectRows}
-              onChange={this.handleStandardTableChange}
-            /> */}
           </div>
         </Card>
+
+        <QueryTagsBox>
+          <span>检索项: </span>
+          <>
+            {queryTags.map((item: any) => (
+              <Tag
+                key={item.get('name')}
+                closable={true}
+                color="#108ee9"
+                onClose={e => this.closeTag(e, item.get('name'))}
+              >
+                {`${item.get('title')}: ${item.get('value')}`}
+              </Tag>
+            ))}
+          </>
+        </QueryTagsBox>
+
+        <BatchOp styles={styles} handleMenuClick={this.handleMenuClick} />
 
         {/* 新建 modal */}
         <CreateForm {...parentMethods} modalVisible={modalVisible} />

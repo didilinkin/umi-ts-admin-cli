@@ -33,7 +33,7 @@ const initState = fromJS({
       value: '1',
     },
   ],
-  queryTags: [{ title: '状态', name: 'status', value: 'wait' }],
+  queryTags: [{ title: '状态', name: 'status', value: 'default' }],
   data: [],
   statusActive: '',
 })
@@ -130,7 +130,7 @@ export default {
 
     // 去重, 以前面的为准
     *setQueryTags({ payload }: SetQuery, { put }: DvaApi) {
-      const queryTags = [{ title: '编号', name: 'id', value: '007' }]
+      const queryTags = [{ title: '状态', name: 'status', value: 'default' }]
       _.forIn(payload.query, (value: QueryParamsItem, key: string) => queryTags.push(value))
       yield put({
         type: UPDATE_QUERY_TAGS,

@@ -8,7 +8,7 @@ import QueryForm from './components/queryForm'
 import QueryTable from './components/queryTable'
 
 // types
-import { QueryState, TotalStatus, QueryParams, DataItemType } from './types'
+import { QueryState, TotalStatus, QueryParams, DataItemType, QueryParamsItem } from './types'
 import { List } from 'immutable'
 
 // utils
@@ -17,10 +17,11 @@ import setChildProps from './utils/setChildProps'
 interface IProps {
   dispatch: () => void
   loading: boolean
-  totalStatus: List<TotalStatus> // Immutable
-  queryParams: List<QueryParams> // Immutable
-  data: List<DataItemType> // Immutable
-  statusActive: string,
+  totalStatus: List<TotalStatus>
+  queryParams: List<QueryParams>
+  data: List<DataItemType>
+  queryTags: List<QueryParamsItem>
+  statusActive: string
 }
 
 interface IState {
@@ -35,6 +36,7 @@ interface IState {
   queryParams: state.query.get('queryParams'),
   data: state.query.get('data'),
   statusActive: state.query.get('statusActive'),
+  queryTags: state.query.get('queryTags'),
 }))
 export default class Query extends React.Component<IProps, IState> {
   render() {
@@ -45,7 +47,7 @@ export default class Query extends React.Component<IProps, IState> {
           <QueryData {...pick(this.props, setChildProps(['totalStatus', 'statusActive']))} />
 
           {/* 搜索项 */}
-          <QueryForm {...pick(this.props, setChildProps(['queryParams']))} />
+          <QueryForm {...pick(this.props, setChildProps(['queryParams', 'queryTags']))} />
 
           {/* 表格部分 */}
           <QueryTable {...pick(this.props, setChildProps(['data']))} />

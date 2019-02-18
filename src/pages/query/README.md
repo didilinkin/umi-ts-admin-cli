@@ -66,3 +66,4 @@ state: {
 ## TODO
 * models/ => model.ts 
 * 当 totalStatus 为空时 渲染 '全量'一个 - done
+* closeTag: dispatch 操作 tag, 发起请求?
