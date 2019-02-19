@@ -1,6 +1,8 @@
 // 参考文档
 // https://github.com/f2e-journey/treasure/blob/master/api.md
 // https://yq.aliyun.com/articles/283282#3
+import omit from 'lodash/omit'
+import assign from 'lodash/assign'
 
 /**
  * 设置 mock 返回值方法
@@ -21,23 +23,23 @@
 //   "msg": "数据查询异常，请检查参数"
 // }
 
-export default ({
-  type,
-  data,
-  version = 'v1',
-  msg,
-  subMsg = '',
-  status = 200,
-}) => {
-  switch (type) {
+export default (res) => {
+  switch (res.type) {
     case 'success':
-      return {
-        status,
-        data,
-        msg,
-        subMsg,
-        version,
-      }
+      return omit(
+        assign({}, res, {
+          status: 200,
+        }),
+        ['type'],
+      )
+
+    case 'error':
+      return omit(
+        assign({}, res, {
+          status: 500,
+        }),
+        ['type'],
+      )
 
     default:
       break

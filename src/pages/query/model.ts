@@ -131,7 +131,6 @@ export default {
     *setQuery({ payload }: SetQuery, { put, select }: DvaApi) {
       let query = yield select((state: QueryState): any => state.query.get('query').toJS())
       query = _.assign({}, query, payload)
-
       yield put({ type: 'getTotalStatus', payload: { query } })
       yield put({ type: 'getQueryData', payload: { query } })
       yield put({ type: UPDATE_QUERY, payload: { query } })
