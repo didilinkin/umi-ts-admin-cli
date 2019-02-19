@@ -1,5 +1,11 @@
+/*
+ * @Author: yanxiaodi 929213769@qq.com
+ * @LastEditors: yanxiaodi 929213769@qq.com
+ * @Description: params 不做操作, 直传
+ * @Date: 2019-02-16 14:10:01
+ * @LastEditTime: 2019-02-19 23:52:41
+ */
 import request from 'umi-request'
-import qs from 'qs'
 
 import {
   BLOCK_PATH,
@@ -15,19 +21,11 @@ export async function getQueryParams(): Promise<any> {
 }
 
 export async function getTotalStatus(params?: any): Promise<any> {
-  console.log(
-    'service-query-获取 全部状态数据: param ===> ',
-    // qs.stringify(params),
-    params
-  )
-  return request(`${API_HEAD}${API_GET_TOTAL_STATUS}`, {
-    params,
-  })
+  console.log('service-query-获取 全部状态数据: param ===> ', params)
+  return request(`${API_HEAD}${API_GET_TOTAL_STATUS}`, { params })
 }
 
 export async function getQueryData(params?: any): Promise<any> {
   console.log('service-query-获取 表格数据: param ===> ', params)
-  return request(`${API_HEAD}${API_GET_QUERY_DATA}`, {
-    params,
-  })
+  return request(`${API_HEAD}${API_GET_QUERY_DATA}`, { params })
 }

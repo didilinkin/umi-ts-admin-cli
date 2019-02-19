@@ -1,3 +1,5 @@
+import { Map } from 'immutable'
+
 export interface TotalStateItem {
   title: string
   name: string
@@ -50,25 +52,30 @@ export interface ResType {
   version?: string
 }
 
+// query 参数对象 类型描述
+export interface QueryType {
+  id?: string
+  status?: string
+  [propName: string]: any
+}
 export interface SetQuery {
-  payload: {
-    id?: string
-    status?: string
-    query?: any
-    [propName: string]: any
-  }
+  payload: QueryType
 }
 
-export interface QueryInitState {
-  orders: 'desc' | 'asc' //
-  pagination: {
-    total: number // 0
+interface ServiceParams {
+  type?: 0 | 1 // 0就是分页参数生效, 为1分页参数不生效
+  orders?: {
+    name: 'orders'
+    type: 'desc' | 'asc'
+  }
+  pagination?: {
+    total?: number // 0
     current: number // 1
     pageSize: number // 10
   }
-  query: {
-    status?: string
-  }
+  query: QueryType
+}
+export interface QueryInitState extends ServiceParams {
   totalStatus: TotalStateItem[]
   queryTags: TotalStateItem[]
   queryParams: QueryParamsItem[]
@@ -76,34 +83,22 @@ export interface QueryInitState {
   statusActive: string
 }
 
-// const params = {
-//   orders: {
-//     name: 'orders',
-//     type: 'desc',
-//   },
-//   pagination: {
-//     current: 1,
-//     pageSize: 15,
-//   },
-//   query: {
-//     status: 'success',
-//     name: "刘志强",
-//   },
-// }
+export interface QueryServicePayload {
+  payload: {
+    query: ServiceParams
+  }
+}
 
-export interface QueryServiceParams {
-  type: 0 | 1 // 全量查询
-  orders: {
-    name: 'orders'
-    type: 'desc' | 'asc'
-  }
-  pagination: {
-    current: number
-    pageSize: number
-  }
-  query: {
-    id?: string
-    status?: string
-    [propName: string]: any
-  }
+export interface ImmutableMap<T, R = T> {
+  get<K extends keyof T>(name: K): T[K]
+  set(key: string, value: any): ImmutableMap<T, R>
+  setIn(keyPath: string[], value: any): ImmutableMap<T, R>
+  getIn<K extends keyof T>(keyPath: string[]): T[K]
+  deleteIn(keyPath: string[]): ImmutableMap<T, R>
+  toJS(): R
+}
+
+export interface IQueryInitState extends Map<string, any> {
+  toJS(): QueryInitState
+  get<K extends keyof QueryInitState>(key: K): QueryInitState[K]
 }

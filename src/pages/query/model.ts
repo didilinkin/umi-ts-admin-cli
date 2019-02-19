@@ -1,7 +1,16 @@
 import { fromJS, Map } from 'immutable'
 import _ from 'lodash'
 
-import { TotalStatus, QueryParams, SetQuery, QueryParamsItem, QueryInitState } from './types'
+import {
+  TotalStatus,
+  QueryParams,
+  SetQuery,
+  QueryParamsItem,
+  QueryServicePayload,
+  QueryInitState,
+  QueryType,
+  IQueryInitState,
+} from './types'
 import { BLOCK_PATH } from './config'
 import checkResCode from './utils/checkResCode'
 import * as queryServices from './service'
@@ -23,10 +32,16 @@ const UPDATE_QUERY_TAGS = 'UPDATE_QUERY_TAGS'
 const SET_STATUS_ACTIVE = 'SET_STATUS_ACTIVE'
 
 const initState = fromJS({
-  // 排序 string
-  orders: 'descend', // 'descend' 降序, 'ascend' 升序
-  // 分页参数 { 当前的页码, 页面条数 }
-  // RES: 总条数 (总页数由组件计算)
+  // 分页类型
+  type: 0,
+
+  // 排序. 组件中要加 'end'; 'descend' 降序, 'ascend' 升序
+  orders: {
+    name: 'orders',
+    type: 'desc',
+  },
+
+  // 分页参数; 总条数 (总页数由组件计算)
   pagination: {
     total: 0, // res
     current: 1,
@@ -65,11 +80,12 @@ export default {
   },
 
   effects: {
-    // atom: 获取 全部状态
-    *getTotalStatus({ payload }, { call, put }: DvaApi) {
+    // 获取 全部状态, 需要参数: query
+    *getTotalStatus(__: void, { call, put, select }: DvaApi) {
+      const query = yield select((state: QueryState): any => state.query.get('query').toJS())
       let totalStatus: TotalStatus = [{ title: '总量', name: 'total', value: 0 }]
       try {
-        const totalStatusRes = yield call(queryServices.getTotalStatus, { ...payload.query })
+        const totalStatusRes = yield call(queryServices.getTotalStatus, { ...query })
         if (checkResCode(totalStatusRes)) {
           totalStatus = _.cloneDeep(_.get(totalStatusRes, 'data.totalStatus'))
         }
@@ -80,8 +96,9 @@ export default {
       }
     },
 
-    // atom: 更新 表格数据
-    *getQueryData({ payload }, { call, put }: DvaApi) {
+    // 更新 表格数据, 需要参数: type, orders, pagination, query
+    *getQueryData(__: void, { call, put, select }: DvaApi) {
+      const currentState = yield select((state: QueryState): any => state.query.toJS())
       let data = [
         {
           key: 2,
@@ -91,7 +108,10 @@ export default {
         },
       ]
       try {
-        const dataRes = yield call(queryServices.getQueryData, { ...payload.query })
+        const dataRes = yield call(
+          queryServices.getQueryData,
+          _.pick(currentState, ['type', 'orders', 'pagination', 'query'])
+        )
         if (checkResCode(dataRes)) {
           data = _.cloneDeep(_.get(dataRes, 'data.data'))
         }
@@ -103,9 +123,7 @@ export default {
     },
 
     // 初始化
-    *init(__: void, { call, put, select }: DvaApi) {
-      console.time('query/init')
-      const query = yield select((state: QueryState): any => state.query.get('query').toJS())
+    *init(__: void, { call, put }: DvaApi) {
       let queryParams: QueryParams = [
         {
           title: '编号',
@@ -123,24 +141,29 @@ export default {
         console.log('query/init 出错 ===> ', e)
       } finally {
         yield put({ type: SET_QUERY_PARAMS, payload: { queryParams } })
-        yield put({ type: 'getTotalStatus', payload: { query } })
-        yield put({ type: 'getQueryData', payload: { query } })
+        yield put({ type: 'getTotalStatus' })
+        yield put({ type: 'getQueryData' })
       }
     },
 
+    // 只有 totalStatus 页面会触发
     *setQuery({ payload }: SetQuery, { put, select }: DvaApi) {
-      let query = yield select((state: QueryState): any => state.query.get('query').toJS())
-      query = _.assign({}, query, payload)
-      yield put({ type: 'getTotalStatus', payload: { query } })
-      yield put({ type: 'getQueryData', payload: { query } })
-      yield put({ type: UPDATE_QUERY, payload: { query } })
-      yield put({ type: 'setQueryTags', payload: { query } })
+      let currentQuery: QueryType = yield select((state: { query: Map<string, any> }) =>
+        state.query.get('query').toJS()
+      )
+      currentQuery = _.assign({}, currentQuery, payload)
+      yield put({ type: UPDATE_QUERY, payload: { query: currentQuery } })
+      yield put({ type: 'getTotalStatus' })
+      yield put({ type: 'getQueryData' })
+      yield put({ type: 'setQueryTags', payload: { query: payload } })
     },
 
     // 去重, 以前面的为准
     *setQueryTags({ payload }: SetQuery, { put }: DvaApi) {
-      const queryTags = [{ title: '状态', name: 'status', value: 'default' }]
-      _.forIn(payload.query, (value: QueryParamsItem, key: string) => queryTags.push(value))
+      const queryTags = [
+        { title: '状态', name: 'status', value: 'default' }, // init
+        { title: '状态', name: 'status', value: _.get(payload, 'query.status') },
+      ]
       yield put({
         type: UPDATE_QUERY_TAGS,
         payload: {

@@ -50,9 +50,10 @@ export default class QueryData extends PureComponent<IProps, {}> {
     this.props.dispatch({
       type: 'query/setQuery',
       payload: {
-        status: assign({}, statusParam, {
-          value: item.name,
-        }),
+        // status: assign({}, statusParam, {
+        //   value: item.name,
+        // }),
+        status: item.name,
       },
     })
     this.props.dispatch({

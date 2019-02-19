@@ -38,3 +38,18 @@ declare interface StoreType {
   }
   dispatch: (param: { type: string; payload?: any }) => void
 }
+
+declare interface DvaState extends StoreType {
+  '@@dva': number
+  routing: {
+    location: {
+      hash: string
+      key: string
+      pathname: string
+      query: any
+      search: string
+    }
+  }
+  // model name
+  [propName: string]: any
+}

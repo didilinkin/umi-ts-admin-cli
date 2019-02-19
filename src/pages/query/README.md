@@ -33,15 +33,35 @@
 ## model 部分
 
 ```js
+interface ServiceParams {
+  type?: 0 | 1 // 0就是分页参数生效, 为1分页参数不生效
+  orders?: {
+    name: 'orders'
+    type: 'desc' | 'asc'
+  }
+  pagination?: {
+    total?: number // 0
+    current: number // 1
+    pageSize: number // 10
+  }
+  query: QueryType
+}
+
+export interface QueryInitState extends ServiceParams {
+  totalStatus: TotalStateItem[]
+  queryTags: TotalStateItem[]
+  queryParams: QueryParamsItem[]
+  data: any
+  statusActive: string
+}
+
 state: {
-  visible: bool,                                // 显隐 (state自存?)
-  modalType: 'create' | 'update' | 'edit',      // modal 状态 (state自存?)
   totalStatus: TotalStateItem[],
   queryParams: QueryParamsItem[],
   queryTabs: ;string[],
   data: any[],
   batchOp: any[],                               // 批量操作
-  itemOp: any,
+  itemOp: any,                                  // ?
 }
 ```
 * 请求 - fetch
@@ -64,14 +84,18 @@ state: {
 8. 批量操作 等功能: 配置 '批量操作' 数组 => '批量操作' 接口 => 请求 (更新列表)
 
 ## TODO
-* models/ => model.ts 
+* 分页 - done
+* 排序条件 - done
+* 新增 排序 & 分页 参数 - done
+* models/ => model.ts - done
+* 测试 接口错误时, 页面反馈 - done
 * 当 totalStatus 为空时 渲染 '全量'一个 - done
-* closeTag: dispatch 操作 tag, 发起请求?
-* 排序条件
-* 分页
+* query 统一约束 请求时的 params 参数格式, 配置 types - done
+* 在接口交互时, 将 query 通过方法做一次包装, 转换为 后端需要的格式 - done
+* 
+* 对 提交的参数做 qs 转 string - error, 需要调研
+* 
 * 批量操作 用JSON 配置还是 放开一个 接口 渲染 config 写好的 组件 model 合并
-* 在接口交互时, 将 query 通过方法做一次包装, 转换为 后端需要的格式
-* 对 提交的参数做 qs 转 string
-* 新增 排序 & 分页 参数
-* query 统一约束 请求时的 params 参数格式, 配置 types
-* 测试 接口错误时, 页面反馈
+* query string params 问题, 参数层级问题
+* closeTag: dispatch 操作 tag, 发起请求?
+* types 优化
