@@ -203,6 +203,7 @@ class QueryForm extends PureComponent<IFormProps, IFormState> {
       this.setState({
         formValues: values,
       })
+
       this.props.dispatch({
         type: 'query/fetch', // 请求
         payload: values,
@@ -217,10 +218,8 @@ class QueryForm extends PureComponent<IFormProps, IFormState> {
     this.setState({
       formValues: {},
     })
-    dispatch({
-      type: 'query/fetch',
-      payload: {},
-    })
+    // dispatch({ type: 'query/init' })
+    dispatch({ type: 'query/resetQuery' })
   }
 
   // 开启/关闭 表单
@@ -392,13 +391,18 @@ class QueryForm extends PureComponent<IFormProps, IFormState> {
   }
 
   closeTag = (e?: any, tagName?: string): void => {
-    console.log('关闭 tag: ===> ', tagName)
+    this.props.dispatch({
+      type: 'query/setQuery',
+      payload: {
+        type: 'remove',
+        value: tagName, // e.g. => success
+      },
+    })
   }
 
   render() {
-    const { loading, queryTags } = this.props
-    // debugger
-    const { selectedRows, modalVisible, updateModalVisible, stepFormValues } = this.state
+    const { queryTags } = this.props
+    const { modalVisible } = this.state
     const menu = (
       <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
         <Menu.Item key="remove">删除</Menu.Item>

@@ -10,6 +10,10 @@ import {
   QueryType,
   DeletePayload,
   UpdatePayload,
+  QueryTags,
+  QueryParamsItem,
+  SetPagination,
+  SetOrders,
 } from './types'
 import { BLOCK_PATH, RES_MESSAGE } from './config'
 import checkResCode from './utils/checkResCode'
@@ -18,11 +22,6 @@ import * as queryServices from './service'
 interface QueryState extends StoreType {
   query: Map<string, any>
 }
-interface StatusActive {
-  payload: {
-    statusActive: string
-  }
-}
 
 const SET_TOTAL_STATUS = 'SET_TOTAL_STATUS'
 const SET_QUERY_PARAMS = 'SET_QUERY_PARAMS'
@@ -30,6 +29,8 @@ const SET_QUERY_DATA = 'SET_QUERY_DATA'
 const UPDATE_QUERY = 'UPDATE_QUERY'
 const UPDATE_QUERY_TAGS = 'UPDATE_QUERY_TAGS'
 const SET_STATUS_ACTIVE = 'SET_STATUS_ACTIVE'
+const SET_QUERY_PAGINATION = 'SET_QUERY_PAGINATION'
+const SET_QUERY_ORDERS = 'SET_QUERY_ORDERS'
 
 const initState = fromJS({
   // 分页类型
@@ -122,7 +123,6 @@ export default {
       }
     },
 
-    // 初始化
     *init(__: void, { call, put }: DvaApi) {
       let queryParams: QueryParams = [
         {
@@ -146,51 +146,111 @@ export default {
       }
     },
 
-    // 只有 totalStatus 页面会触发
     *setQuery({ payload }: SetQuery, { put, select }: DvaApi) {
       let currentQuery: QueryType = yield select((state: { query: Map<string, any> }) =>
         state.query.get('query').toJS()
       )
-      currentQuery = _.assign({}, currentQuery, payload)
+      if (payload.type === 'update') {
+        currentQuery = _.assign({}, currentQuery, payload.value)
+      } else if (payload.type === 'remove') {
+        currentQuery = _.omit(currentQuery, payload.value)
+      } else if (payload.type === 'reset') {
+        currentQuery = {}
+      }
       yield put({ type: UPDATE_QUERY, payload: { query: currentQuery } })
       yield put({ type: 'getTotalStatus' })
       yield put({ type: 'getQueryData' })
-      yield put({ type: 'setQueryTags', payload: { query: payload } })
+      yield put({ type: 'setQueryTags' })
+      yield put({ type: 'setStatusActive' })
     },
 
-    // 去重, 以前面的为准
-    *setQueryTags({ payload }: SetQuery, { put }: DvaApi) {
-      const queryTags = [
-        { title: '状态', name: 'status', value: 'default' }, // init
-        { title: '状态', name: 'status', value: _.get(payload, 'query.status') },
-      ]
+    // 不能保证渲染关系 = query 加入顺序
+    *setQueryTags(__: void, { put, select }: DvaApi) {
+      const currentQuery: QueryType = yield select((state: { query: Map<string, any> }) =>
+        state.query.get('query').toJS()
+      )
+      const currentQueryParams: QueryParamsItem[] = yield select(
+        (state: { query: Map<string, any> }) => state.query.get('queryParams').toJS()
+      )
+      const queryTags: QueryTags[] = []
+      _.forIn(currentQuery, (value: any, key: string) =>
+        queryTags.push({
+          title: _.get(
+            _.find(currentQueryParams, (item: QueryParamsItem) => item.name === key),
+            'title'
+          ),
+          name: key,
+          value,
+        })
+      )
       yield put({
         type: UPDATE_QUERY_TAGS,
-        payload: {
-          queryTags: _.reverse(_.uniqBy(_.reverse(queryTags), 'name')),
-        },
+        payload: { queryTags },
       })
     },
 
-    *setStatusActive({ payload }: StatusActive, { put }: DvaApi) {
-      yield put({
-        type: SET_STATUS_ACTIVE,
-        payload: {
-          statusActive: payload.statusActive,
-        },
-      })
+    *setStatusActive(__: void, { put, select }: DvaApi) {
+      const currentQuery: QueryType = yield select((state: { query: Map<string, any> }) =>
+        state.query.get('query').toJS()
+      )
+      let statusActive = ''
+      if (hasIn(currentQuery, 'status')) {
+        statusActive = currentQuery.status
+      }
+      yield put({ type: SET_STATUS_ACTIVE, payload: { statusActive } })
     },
 
     *resetQuery(__: void, { put }: DvaApi) {
-      // 重置操作
+      // 重置 分页数据
+      // 重置 排序
+      // 重置 query 参数
       // 清理 active
+      yield put({
+        type: 'setPagination',
+        payload: {
+          pagination: {
+            current: 1,
+            pageSize: 10,
+          },
+        },
+      })
+      yield put({
+        type: 'setOrders',
+        payload: {
+          orders: {
+            type: 'desc',
+          },
+        },
+      })
+      yield put({
+        type: 'setQuery',
+        payload: {
+          type: 'reset',
+        },
+      })
+      yield put({ type: 'setStatusActive' })
+    },
+
+    *setPagination({ payload }: SetPagination, { put }: DvaApi) {
+      yield put({
+        type: SET_QUERY_PAGINATION,
+        payload: { pagination: payload.pagination },
+      })
+    },
+
+    *setOrders({ payload }: SetOrders, { put }: DvaApi) {
+      yield put({
+        type: SET_QUERY_ORDERS,
+        payload: { orders: payload.orders },
+      })
     },
 
     *fetch(payload: any, { call }: DvaApi) {
       console.log('query/fetch payload ===> ', payload)
     },
 
-    *add({ payload }: any, { call, put, select }: DvaApi) {
+    // 因无法确认 新增 结构, 所以使用 any
+    *add({ payload }: any, { call, put }: DvaApi) {
       console.log('query/add payload ===> ', payload)
       try {
         const res = yield call(queryServices.postQuery, payload)
@@ -273,6 +333,14 @@ export default {
 
     SET_STATUS_ACTIVE(state: any, { payload }) {
       return state.set('statusActive', fromJS(payload.statusActive))
+    },
+
+    SET_QUERY_PAGINATION(state: any, { payload }) {
+      return state.mergeDeep(fromJS({ pagination: payload.pagination }))
+    },
+
+    SET_QUERY_ORDERS(state: any, { payload }) {
+      return state.mergeDeep(fromJS({ orders: payload.orders }))
     },
   },
 }

@@ -58,21 +58,41 @@ export interface QueryType {
   status?: string
   [propName: string]: any
 }
+
 export interface SetQuery {
-  payload: QueryType
+  payload: {
+    type: 'update' | 'remove' | 'reset'
+    value?: QueryType | string
+  }
 }
 
-interface ServiceParams {
+export interface Pagination {
+  total?: number // 0
+  current: number // 1
+  pageSize: number // 10
+}
+
+export interface SetPagination {
+  payload: {
+    pagination: Pagination
+  }
+}
+
+export interface SetOrders {
+  payload: {
+    orders: {
+      type: 'desc' | 'asc'
+    }
+  }
+}
+
+export interface ServiceParams {
   type?: 0 | 1 // 0就是分页参数生效, 为1分页参数不生效
   orders?: {
     name: 'orders'
     type: 'desc' | 'asc'
   }
-  pagination?: {
-    total?: number // 0
-    current: number // 1
-    pageSize: number // 10
-  }
+  pagination?: Pagination
   query: QueryType
 }
 export interface QueryInitState extends ServiceParams {
@@ -103,6 +123,21 @@ export interface UpdateParams {
 export interface UpdatePayload {
   payload: {
     params: UpdateParams
+  }
+}
+
+// 设置 tags 用
+// QueryTags 删除使用时, 只需 name
+export interface QueryTags {
+  name: string
+  title?: string
+  value?: string
+}
+
+export interface SetQueryTags {
+  payload: {
+    type: 'update' | 'remove'
+    value: QueryTags
   }
 }
 

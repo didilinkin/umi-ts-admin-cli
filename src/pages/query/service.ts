@@ -1,10 +1,3 @@
-/*
- * @Author: yanxiaodi 929213769@qq.com
- * @LastEditors: yanxiaodi 929213769@qq.com
- * @Description: params 不做操作, 直传
- * @Date: 2019-02-16 14:10:01
- * @LastEditTime: 2019-02-20 21:13:55
- */
 import request from 'umi-request'
 
 import {

@@ -42,24 +42,13 @@ const QueryDataBox = styled.div`
 
 export default class QueryData extends PureComponent<IProps, {}> {
   handleQueryParam = (item: TotalStateItem): void => {
-    const statusParam = {
-      title: '状态',
-      name: 'status',
-      value: 'wait',
-    }
     this.props.dispatch({
       type: 'query/setQuery',
       payload: {
-        // status: assign({}, statusParam, {
-        //   value: item.name,
-        // }),
-        status: item.name,
-      },
-    })
-    this.props.dispatch({
-      type: 'query/setStatusActive',
-      payload: {
-        statusActive: item.name,
+        type: 'update',
+        value: {
+          status: item.name, // success
+        },
       },
     })
   }

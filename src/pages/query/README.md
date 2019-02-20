@@ -93,17 +93,20 @@ state: {
 * query 统一约束 请求时的 params 参数格式, 配置 types - done
 * 在接口交互时, 将 query 通过方法做一次包装, 转换为 后端需要的格式 - done
 *
+* query string params 问题, 参数层级问题 - 后端验证正确获取
 * POST add 添加操作 & 新增 mock接口 - done
 * PUT update 更新(编辑)操作 & 更新 mock接口 - done
 * DELETE remove 删除 操作 - done
 * 暴露给 表格的回调函数 (更新 & 删除 & 其他操作) - done
+* closeTag: dispatch 操作 tag, 发起请求? - done
+* cloneTag: 关闭后, 更新 active状态 - done
+* 除 totalStatus 触发的更新状态, 其他所有的 更新状态 必须要 清除 statusActive - done
+* 重置 操作: 清理 query 参数, 然后重新请求 - GET 类同 搜索； 加入 tag 操作 - done
 * 
 * 对 提交的参数做 qs 转 string - error, 需要调研
 * 
 * 批量操作 用JSON 配置还是 放开一个 接口 渲染 config 写好的 组件 model 合并
-* query string params 问题, 参数层级问题
 * types 优化
 *
 * 搜索 操作: 设置 query 参数, 然后请求 - GET 将 搜索条件放入 query. 然后触发 两个请求； 加入 tag 操作内容
-* 重置 操作: 清理 query 参数, 然后重新请求 - GET 类同 搜索； 加入 tag 操作
-* closeTag: dispatch 操作 tag, 发起请求? - GET; 加入 tag 操作
+* 多个检索项时, 检查 tags 是否正确渲染
