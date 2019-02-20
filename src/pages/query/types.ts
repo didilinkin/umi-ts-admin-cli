@@ -89,6 +89,23 @@ export interface QueryServicePayload {
   }
 }
 
+export interface DeletePayload {
+  payload: {
+    id: string
+  }
+}
+
+export interface UpdateParams {
+  id: string
+  [propName: string]: any
+}
+
+export interface UpdatePayload {
+  payload: {
+    params: UpdateParams
+  }
+}
+
 export interface ImmutableMap<T, R = T> {
   get<K extends keyof T>(name: K): T[K]
   set(key: string, value: any): ImmutableMap<T, R>

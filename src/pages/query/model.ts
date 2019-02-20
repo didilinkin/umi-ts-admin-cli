@@ -1,17 +1,17 @@
 import { fromJS, Map } from 'immutable'
 import _ from 'lodash'
+import hasIn from 'lodash/hasIn'
+import { message } from 'antd'
 
 import {
   TotalStatus,
   QueryParams,
   SetQuery,
-  QueryParamsItem,
-  QueryServicePayload,
-  QueryInitState,
   QueryType,
-  IQueryInitState,
+  DeletePayload,
+  UpdatePayload,
 } from './types'
-import { BLOCK_PATH } from './config'
+import { BLOCK_PATH, RES_MESSAGE } from './config'
 import checkResCode from './utils/checkResCode'
 import * as queryServices from './service'
 
@@ -192,13 +192,12 @@ export default {
 
     *add({ payload }: any, { call, put, select }: DvaApi) {
       console.log('query/add payload ===> ', payload)
-      // 业务封装-新增 新增参数, call => service
-      // 不需要 拉取 query 参数
-      // 判断成功添加后, 更新 totalStatus & queryData 表格数据
       try {
         const res = yield call(queryServices.postQuery, payload)
         if (checkResCode(res)) {
-          // 是否应该放在 finally
+          if (hasIn(res, RES_MESSAGE)) {
+            message.success(res[RES_MESSAGE])
+          }
           yield put({ type: 'getTotalStatus' })
           yield put({ type: 'getQueryData' })
         }
@@ -207,14 +206,36 @@ export default {
       }
     },
 
-    *remove(payload: any, { call }: DvaApi) {
+    *remove({ payload }: DeletePayload, { call, put }: DvaApi) {
       console.log('query/remove payload ===> ', payload)
-      console.log('删除操作')
+      try {
+        const res = yield call(queryServices.deleteQuery, payload.id)
+        if (checkResCode(res)) {
+          if (hasIn(res, RES_MESSAGE)) {
+            message.success(res[RES_MESSAGE])
+          }
+          yield put({ type: 'getTotalStatus' })
+          yield put({ type: 'getQueryData' })
+        }
+      } catch (e) {
+        console.log('query/delete 出错', e)
+      }
     },
 
-    *update(payload: any, { call }: DvaApi) {
-      console.log('query/update payload ===> ', payload)
-      console.log('更新操作')
+    *update({ payload }: UpdatePayload, { call, put }: DvaApi) {
+      console.log('query/update payload ===> ', payload.params)
+      try {
+        const res = yield call(queryServices.putQuery, payload.params)
+        if (checkResCode(res)) {
+          if (hasIn(res, RES_MESSAGE)) {
+            message.success(res[RES_MESSAGE])
+          }
+          yield put({ type: 'getTotalStatus' })
+          yield put({ type: 'getQueryData' })
+        }
+      } catch (e) {
+        console.log('query/update 出错', e)
+      }
     },
 
     *setParams(payload: any, { call }: DvaApi) {

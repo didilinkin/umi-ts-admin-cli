@@ -4,7 +4,6 @@ import _ from 'lodash'
 import Immutable, { List, Map, is } from 'immutable'
 import {
   Form,
-  Alert,
   Row,
   Col,
   Input,
@@ -12,9 +11,7 @@ import {
   Icon,
   Select,
   Menu,
-  message,
   Card,
-  Dropdown,
   Modal,
   DatePicker,
   Tag,
@@ -26,10 +23,10 @@ import SetAdvancedInput from './SetAdvancedInput'
 import BatchOp from './BatchOp'
 import styles from './style.less'
 import { TotalStateItem, QueryParamsItem } from '../../types'
+import { MOCK_OP_ID } from '../../config'
 
 const FormItem = Form.Item
 const { Option } = Select
-const { MonthPicker, RangePicker, WeekPicker } = DatePicker
 
 const CreateForm = Form.create()((props: any) => {
   const { modalVisible, form, handleAdd, handleModalVisible } = props
@@ -241,7 +238,7 @@ class QueryForm extends PureComponent<IFormProps, IFormState> {
     })
   }
 
-  // 触发 菜单 点击
+  // 触发 菜单 点击： REMOVE
   handleMenuClick = (e: any) => {
     const { dispatch } = this.props
     const { selectedRows } = this.state
@@ -277,7 +274,6 @@ class QueryForm extends PureComponent<IFormProps, IFormState> {
         desc: fields.desc,
       },
     })
-    message.success('添加成功')
     this.handleModalVisible()
   }
 
@@ -300,7 +296,6 @@ class QueryForm extends PureComponent<IFormProps, IFormState> {
         key: fields.key,
       },
     })
-    message.success('配置成功')
     this.handleUpdateModalVisible()
   }
 

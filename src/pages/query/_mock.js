@@ -6,6 +6,11 @@ import {
   API_GET_QUERY_DATA,
   API_GET_QUERY_PARAMS,
   API_POST_QUERY,
+  API_PUT_QUERY,
+  API_DELETE_QUERY,
+  // API_PATCH_QUERY,
+  MOCK_OP_ID,
+  MOCK_OP_DELETE,
 } from './config'
 
 const DELAY_TIME = 1000
@@ -15,26 +20,11 @@ const getTotalStatus = `GET ${API_HEAD}${API_GET_TOTAL_STATUS}`
 const getQueryData = `GET ${API_HEAD}${API_GET_QUERY_DATA}`
 const getQueryParams = `GET ${API_HEAD}${API_GET_QUERY_PARAMS}`
 const postQuery = `POST ${API_HEAD}${API_POST_QUERY}`
+const putQuery = `PUT ${API_HEAD}${API_PUT_QUERY}/${MOCK_OP_DELETE.id}`
+const deleteQuery = `DELETE ${API_HEAD}${API_DELETE_QUERY}/${MOCK_OP_ID}`
+// const patchQuery = `PATCH ${API_HEAD}${API_PATCH_QUERY}`
 
 export default {
-  // 支持值为 Object 和 Array
-  'GET /api/users': (req, res) => {
-    setTimeout(() => {
-      res.send({
-        users: [1, 2],
-      })
-    }, 2000)
-  },
-
-  // GET POST 可省略
-  '/api/users/1': { id: 1 },
-
-  // 支持自定义函数，API 参考 express@4
-  'POST /api/users/create': (req, res) => {
-    res.end('OK')
-  },
-
-  // query - 请求 全部状态
   [getTotalStatus]: (req, res) => {
     setTimeout(() => {
       res.send(
@@ -152,13 +142,13 @@ export default {
       res.send(
         setResData({
           type: 'success',
-          msg: '添加成功!',
+          msg: '添加 成功!',
           subMsg: 'add success',
           version: BLOCK_API_VERSION,
           data: {},
         })
       )
-    })
+    }, DELAY_TIME)
   },
 
   [getQueryParams]: (req, res) => {
@@ -230,6 +220,34 @@ export default {
               },
             ],
           },
+        })
+      )
+    }, DELAY_TIME)
+  },
+
+  [putQuery]: (req, res) => {
+    setTimeout(() => {
+      res.send(
+        setResData({
+          type: 'success',
+          msg: '更新 成功!',
+          subMsg: 'success',
+          version: BLOCK_API_VERSION,
+          data: {},
+        })
+      )
+    })
+  },
+
+  [deleteQuery]: (req, res) => {
+    setTimeout(() => {
+      res.send(
+        setResData({
+          type: 'success',
+          msg: '删除 成功!',
+          subMsg: 'success',
+          version: BLOCK_API_VERSION,
+          data: {},
         })
       )
     })

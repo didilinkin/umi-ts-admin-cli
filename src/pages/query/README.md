@@ -92,13 +92,18 @@ state: {
 * 当 totalStatus 为空时 渲染 '全量'一个 - done
 * query 统一约束 请求时的 params 参数格式, 配置 types - done
 * 在接口交互时, 将 query 通过方法做一次包装, 转换为 后端需要的格式 - done
+*
+* POST add 添加操作 & 新增 mock接口 - done
+* PUT update 更新(编辑)操作 & 更新 mock接口 - done
+* DELETE remove 删除 操作 - done
+* 暴露给 表格的回调函数 (更新 & 删除 & 其他操作) - done
 * 
 * 对 提交的参数做 qs 转 string - error, 需要调研
 * 
 * 批量操作 用JSON 配置还是 放开一个 接口 渲染 config 写好的 组件 model 合并
 * query string params 问题, 参数层级问题
-* closeTag: dispatch 操作 tag, 发起请求?
 * types 优化
-* add 添加操作 & 新增 mock接口
-* update 更新操作 & 更新 mock接口
-* 搜索 操作: 设置 query 参数, 然后请求
+*
+* 搜索 操作: 设置 query 参数, 然后请求 - GET 将 搜索条件放入 query. 然后触发 两个请求； 加入 tag 操作内容
+* 重置 操作: 清理 query 参数, 然后重新请求 - GET 类同 搜索； 加入 tag 操作
+* closeTag: dispatch 操作 tag, 发起请求? - GET; 加入 tag 操作

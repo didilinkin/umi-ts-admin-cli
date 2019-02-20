@@ -8,15 +8,20 @@ import QueryForm from './components/queryForm'
 import QueryTable from './components/queryTable'
 
 // types
-import { QueryState, TotalStatus, QueryParams, DataItemType, QueryParamsItem } from './types'
+import {
+  QueryState,
+  TotalStatus,
+  QueryParams,
+  DataItemType,
+  QueryParamsItem,
+  MOCK_OP_DELETE,
+} from './config'
 import { List } from 'immutable'
 
 // utils
 import setChildProps from './utils/setChildProps'
 
-interface IProps {
-  dispatch: () => void
-  loading: boolean
+interface IProps extends Props {
   totalStatus: List<TotalStatus>
   queryParams: List<QueryParams>
   data: List<DataItemType>
@@ -39,6 +44,20 @@ interface IState {
   queryTags: state.query.get('queryTags'),
 }))
 export default class Query extends React.Component<IProps, IState> {
+  handleRemove = (id: string): void => {
+    this.props.dispatch({
+      type: 'query/remove',
+      payload: { id },
+    })
+  }
+
+  handleUpdate = (params: MOCK_OP_DELETE): void => {
+    this.props.dispatch({
+      type: 'query/update',
+      payload: { params },
+    })
+  }
+
   render() {
     return (
       <DocumentTitle title="查询页面">
@@ -50,7 +69,12 @@ export default class Query extends React.Component<IProps, IState> {
           <QueryForm {...pick(this.props, setChildProps(['queryParams', 'queryTags']))} />
 
           {/* 表格部分 */}
-          <QueryTable {...pick(this.props, setChildProps(['data']))} />
+          {/* 向下传递 cbFunc: 删除,  */}
+          <QueryTable
+            {...pick(this.props, setChildProps(['data']))}
+            handleRemove={this.handleRemove}
+            handleUpdate={this.handleUpdate}
+          />
         </>
       </DocumentTitle>
     )

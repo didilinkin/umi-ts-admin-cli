@@ -1,10 +1,11 @@
 import React from 'react'
-import { Table } from 'antd'
+import { Table, Button } from 'antd'
 import _ from 'lodash'
 import styled from 'styled-components'
 
 import { List, is } from 'immutable'
-import { DataItemType } from '../../types'
+import { DataItemType, UpdateParams } from '../../types'
+import { MOCK_OP_ID, MOCK_OP_DELETE } from '../../config'
 
 const TableBox = styled.div`
   border-top: 1px solid rgba(204, 204, 204, 1);
@@ -13,6 +14,8 @@ const TableBox = styled.div`
 
 interface IProps extends Props {
   data: List<DataItemType>
+  handleRemove: (id: string) => void // 回调: 删除
+  handleUpdate: (params: UpdateParams) => void // 回调: 更新
 }
 interface IState {
   data: List<DataItemType>
@@ -73,6 +76,27 @@ export default class QueryTable extends React.Component<IProps, IState> {
 
     return (
       <TableBox>
+        {/* 测试用: 删除功能 */}
+        <div style={{ padding: '2rem 0' }}>
+          <Button
+            style={{ marginRight: '2rem' }}
+            type="primary"
+            onClick={() => this.props.handleRemove(MOCK_OP_ID)}
+          >
+            {' '}
+            删除功能 (临时 接口测试用){' '}
+          </Button>
+
+          <Button
+            style={{ marginRight: '2rem' }}
+            type="primary"
+            onClick={() => this.props.handleUpdate(MOCK_OP_DELETE)}
+          >
+            {' '}
+            更新功能 (临时 接口测试用){' '}
+          </Button>
+        </div>
+
         <Table
           loading={this.props.loading}
           columns={columns}
