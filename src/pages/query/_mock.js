@@ -5,6 +5,7 @@ import {
   API_GET_TOTAL_STATUS,
   API_GET_QUERY_DATA,
   API_GET_QUERY_PARAMS,
+  API_POST_QUERY,
 } from './config'
 
 const DELAY_TIME = 1000
@@ -13,6 +14,7 @@ const API_HEAD = `/api${BLOCK_PATH}${BLOCK_API_VERSION}`
 const getTotalStatus = `GET ${API_HEAD}${API_GET_TOTAL_STATUS}`
 const getQueryData = `GET ${API_HEAD}${API_GET_QUERY_DATA}`
 const getQueryParams = `GET ${API_HEAD}${API_GET_QUERY_PARAMS}`
+const postQuery = `POST ${API_HEAD}${API_POST_QUERY}`
 
 export default {
   // 支持值为 Object 和 Array
@@ -143,6 +145,20 @@ export default {
         })
       )
     }, DELAY_TIME)
+  },
+
+  [postQuery]: (req, res) => {
+    setTimeout(() => {
+      res.send(
+        setResData({
+          type: 'success',
+          msg: '添加成功!',
+          subMsg: 'add success',
+          version: BLOCK_API_VERSION,
+          data: {},
+        })
+      )
+    })
   },
 
   [getQueryParams]: (req, res) => {

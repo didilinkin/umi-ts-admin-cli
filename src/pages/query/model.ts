@@ -190,9 +190,21 @@ export default {
       console.log('query/fetch payload ===> ', payload)
     },
 
-    *add(payload: any, { call }: DvaApi) {
+    *add({ payload }: any, { call, put, select }: DvaApi) {
       console.log('query/add payload ===> ', payload)
-      console.log('新增操作')
+      // 业务封装-新增 新增参数, call => service
+      // 不需要 拉取 query 参数
+      // 判断成功添加后, 更新 totalStatus & queryData 表格数据
+      try {
+        const res = yield call(queryServices.postQuery, payload)
+        if (checkResCode(res)) {
+          // 是否应该放在 finally
+          yield put({ type: 'getTotalStatus' })
+          yield put({ type: 'getQueryData' })
+        }
+      } catch (e) {
+        console.log('query/add 出错 ===> ', e)
+      }
     },
 
     *remove(payload: any, { call }: DvaApi) {

@@ -99,3 +99,6 @@ state: {
 * query string params 问题, 参数层级问题
 * closeTag: dispatch 操作 tag, 发起请求?
 * types 优化
+* add 添加操作 & 新增 mock接口
+* update 更新操作 & 更新 mock接口
+* 搜索 操作: 设置 query 参数, 然后请求
