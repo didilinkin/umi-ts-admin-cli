@@ -1,3 +1,4 @@
+import { assign } from 'lodash/assign'
 import { fromJS, Map } from 'immutable'
 import _ from 'lodash'
 import hasIn from 'lodash/hasIn'
@@ -14,6 +15,7 @@ import {
   QueryParamsItem,
   SetPagination,
   SetOrders,
+  TotalStateItem,
 } from './types'
 import { BLOCK_PATH, RES_MESSAGE } from './config'
 import checkResCode from './utils/checkResCode'
@@ -202,18 +204,17 @@ export default {
 
     *resetQuery(__: void, { put }: DvaApi) {
       // 重置 分页数据
-      // 重置 排序
-      // 重置 query 参数
-      // 清理 active
       yield put({
         type: 'setPagination',
         payload: {
+          type: 'reset',
           pagination: {
             current: 1,
             pageSize: 10,
           },
         },
       })
+      // 重置 排序
       yield put({
         type: 'setOrders',
         payload: {
@@ -222,20 +223,27 @@ export default {
           },
         },
       })
+      // 重置 query 参数
       yield put({
         type: 'setQuery',
         payload: {
           type: 'reset',
         },
       })
+      // 清理 active
       yield put({ type: 'setStatusActive' })
     },
 
+    // type: 重置 => 只需 更改 state
+    // type: 更新 => 更改 state 后, 出发 更新 表格操作
     *setPagination({ payload }: SetPagination, { put }: DvaApi) {
       yield put({
         type: SET_QUERY_PAGINATION,
         payload: { pagination: payload.pagination },
       })
+      if (payload.type === 'update') {
+        yield put({ type: 'getQueryData' })
+      }
     },
 
     *setOrders({ payload }: SetOrders, { put }: DvaApi) {
@@ -298,9 +306,21 @@ export default {
       }
     },
 
-    *setParams(payload: any, { call }: DvaApi) {
-      console.log('query/setParams payload ===> ', payload)
-      console.log('配置参数')
+    // 参数格式 无法确认, 所以使用 any
+    *search({ payload }: any, { put }: DvaApi) {
+      let query = {}
+      // 去除 所有 undef & null 参数
+      _.forIn(payload, (value: any, key: string) =>
+        !_.isNil(value) ? (query = _.assign({}, query, { [key]: value })) : ''
+      )
+      console.log('query-search 参数: query ===> ', query)
+      yield put({
+        type: 'setQuery',
+        payload: {
+          type: 'update',
+          value: query,
+        },
+      })
     },
 
     // 批量操作

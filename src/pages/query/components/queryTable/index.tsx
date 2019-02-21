@@ -4,8 +4,8 @@ import _ from 'lodash'
 import styled from 'styled-components'
 
 import { List, is } from 'immutable'
-import { DataItemType, UpdateParams } from '../../types'
-import { MOCK_OP_ID, MOCK_OP_DELETE } from '../../config'
+import { DataItemType, UpdateParams, Pagination } from '../../types'
+import { MOCK_OP_ID, MOCK_OP_DELETE, MOCK_OP_PAGINATION } from '../../config'
 
 const TableBox = styled.div`
   border-top: 1px solid rgba(204, 204, 204, 1);
@@ -16,6 +16,7 @@ interface IProps extends Props {
   data: List<DataItemType>
   handleRemove: (id: string) => void // 回调: 删除
   handleUpdate: (params: UpdateParams) => void // 回调: 更新
+  handlePagination: (pagination: Pagination) => void
 }
 interface IState {
   data: List<DataItemType>
@@ -94,6 +95,15 @@ export default class QueryTable extends React.Component<IProps, IState> {
           >
             {' '}
             更新功能 (临时 接口测试用){' '}
+          </Button>
+
+          <Button
+            style={{ marginRight: '2rem' }}
+            type="primary"
+            onClick={() => this.props.handlePagination(MOCK_OP_PAGINATION)}
+          >
+            {' '}
+            更改 分页参数 (临时 接口测试用){' '}
           </Button>
         </div>
 

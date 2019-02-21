@@ -137,7 +137,7 @@ class QueryForm extends PureComponent<IFormProps, IFormState> {
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
             <FormItem label="编号">
-              {getFieldDecorator('name')(<Input placeholder="请输入 ID" />)}
+              {getFieldDecorator('id')(<Input placeholder="请输入 ID" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
@@ -146,7 +146,7 @@ class QueryForm extends PureComponent<IFormProps, IFormState> {
                 <Select placeholder="请选择" style={{ width: '100%' }}>
                   {!!status ? (
                     statusList.map((item: TotalStateItem) => (
-                      <Option key={`${item.name}`} value={item.title}>
+                      <Option key={`${item.name}`} value={item.name}>
                         {item.title}
                       </Option>
                     ))
@@ -199,14 +199,12 @@ class QueryForm extends PureComponent<IFormProps, IFormState> {
         ...fieldsValue,
         updatedAt: fieldsValue.updatedAt && fieldsValue.updatedAt.valueOf(),
       }
-      // TODO
       this.setState({
         formValues: values,
       })
-
       this.props.dispatch({
-        type: 'query/fetch', // 请求
-        payload: values,
+        type: 'query/search',
+        payload: _.omit(values, ['updatedAt']),
       })
     })
   }
@@ -218,7 +216,6 @@ class QueryForm extends PureComponent<IFormProps, IFormState> {
     this.setState({
       formValues: {},
     })
-    // dispatch({ type: 'query/init' })
     dispatch({ type: 'query/resetQuery' })
   }
 
@@ -320,7 +317,7 @@ class QueryForm extends PureComponent<IFormProps, IFormState> {
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
             <FormItem label="编号">
-              {getFieldDecorator('name')(<Input placeholder="请输入 ID" />)}
+              {getFieldDecorator('id')(<Input placeholder="请输入 ID" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
@@ -329,7 +326,7 @@ class QueryForm extends PureComponent<IFormProps, IFormState> {
                 <Select placeholder="请选择" style={{ width: '100%' }}>
                   {!!status ? (
                     statusList.map((item: TotalStateItem) => (
-                      <Option key={`${item.name}`} value={item.title}>
+                      <Option key={`${item.name}`} value={item.name}>
                         {item.title}
                       </Option>
                     ))

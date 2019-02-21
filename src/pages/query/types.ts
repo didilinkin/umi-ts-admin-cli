@@ -74,6 +74,7 @@ export interface Pagination {
 
 export interface SetPagination {
   payload: {
+    type: 'update' | 'reset'
     pagination: Pagination
   }
 }

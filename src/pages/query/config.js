@@ -22,3 +22,7 @@ export const MOCK_OP_DELETE = {
     id: '8',
     name: 'test',
 }
+export const MOCK_OP_PAGINATION = {
+    current: 2,
+    pageSize: 20,
+}

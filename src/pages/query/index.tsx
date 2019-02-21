@@ -16,6 +16,7 @@ import {
   QueryParamsItem,
   MOCK_OP_DELETE,
 } from './config'
+import { Pagination } from './types'
 import { List } from 'immutable'
 
 // utils
@@ -51,10 +52,20 @@ export default class Query extends React.Component<IProps, IState> {
     })
   }
 
-  handleUpdate = (params: MOCK_OP_DELETE): void => {
+  handleUpdate = (params: { id: string, name: string }): void => {
     this.props.dispatch({
       type: 'query/update',
       payload: { params },
+    })
+  }
+
+  handlePagination = (pagination: Pagination): void => {
+    this.props.dispatch({
+      type: 'query/setPagination',
+      payload: {
+        type: 'update',
+        pagination,
+      },
     })
   }
 
@@ -74,6 +85,7 @@ export default class Query extends React.Component<IProps, IState> {
             {...pick(this.props, setChildProps(['data']))}
             handleRemove={this.handleRemove}
             handleUpdate={this.handleUpdate}
+            handlePagination={this.handlePagination}
           />
         </>
       </DocumentTitle>
