@@ -51,7 +51,7 @@ export default {
   [getQueryData]: (req, res) => {
     setTimeout(() => {
       res.send(
-        // error
+        // error 错误演示
         // setResData({
         //   type: 'error',
         //   msg: '数据查询异常，请检查参数',

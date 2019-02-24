@@ -5,6 +5,7 @@ export interface TotalStateItem {
   name: string
   value: number
 }
+
 export type TotalStatus = TotalStateItem[]
 
 export interface SelectItem {
@@ -96,6 +97,7 @@ export interface ServiceParams {
   pagination?: Pagination
   query: QueryType
 }
+
 export interface QueryInitState extends ServiceParams {
   totalStatus: TotalStateItem[]
   queryTags: TotalStateItem[]
