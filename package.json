@@ -67,7 +67,7 @@
     "umi-plugin-react": "^1.4.0"
   },
   "lint-staged": {
-    "*.{ts, tsx}": [
+    "*.{ts, tsx, js, jsx, less, css}": [
       "prettier --write",
       "git add"
     ]
