@@ -57,6 +57,8 @@ v1.10.1
 * 国际化部分
 * 404 页面具体配置
 * umi block 更改 config 到 业务模块内, 修改调用方式
+* umi mock 全局延迟模拟功能
+* Prettier 在commit 时, 针对 jsx & js 进行优化
 
 ## 关于 格式化 (ESLint + TSLint + Prettier) [说明文档](./docs/format.md)
 
